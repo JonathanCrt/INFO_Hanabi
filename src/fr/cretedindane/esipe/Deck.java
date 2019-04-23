@@ -1,16 +1,15 @@
-package fr.cretedindane.esipe.model;
+package fr.cretedindane.esipe;
 
 import java.awt.Color;
 import java.util.*;
 
 
 public class Deck {
-	private LinkedList<Card> deck;
-	private int maxCard;
+	private ArrayList<Card> deck;
 
 	/** Constructor: Build a deck with 50 cards */
 		public Deck(){
-		LinkedList<Card> deck = new LinkedList<Card>(); 
+		ArrayList<Card> deck = new ArrayList<Card>(); 
 		List<Color> colors = new ArrayList<Color>();
 		colors.add(Color.RED);
 		colors.add(Color.GREEN);
@@ -36,12 +35,15 @@ public class Deck {
 		Collections.shuffle(deck);
 		this.deck = deck;
 	}
-	
+		
 	/** Method returns number of cards left in the deck.*/
 	public int getLeftCards(){
 		return this.deck.size();
 	}
-
+	
+	public ArrayList<Card> getDeck(){
+		return this.deck;
+	}
 
 }
 

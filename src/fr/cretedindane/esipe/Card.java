@@ -1,4 +1,4 @@
-package fr.cretedindane.esipe.model;
+package fr.cretedindane.esipe;
 
 import java.awt.Color;
 
@@ -18,6 +18,12 @@ public class Card {
 	
 	public int getCardValue() {
 		return this.value;
+	}
+	
+	@Override
+	public String toString() {
+		
+	}
 	}
 
 }
