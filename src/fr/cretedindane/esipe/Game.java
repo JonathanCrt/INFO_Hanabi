@@ -16,6 +16,7 @@ public class Game {
 		
 		System.out.println("How many players are you? ");
 		Scanner s = new Scanner(System.in);
+
 		int numberOfPlayers = s.nextInt();
 		int handCards;
 		
@@ -24,7 +25,7 @@ public class Game {
 		} else if(numberOfPlayers==4 || numberOfPlayers==5) {
 			handCards = 4;
 		} else {
-			System.out.println("Le nombre de joueurs doit être compris entre 2 et 5.");
+			System.out.println("The game needs 2, 3, 4 or 5 players.");
 			return;
 		}
 		
@@ -35,13 +36,8 @@ public class Game {
 				hand.add(deck.getDeck().get(i));
 				deck.getDeck().remove(i);
 			}
-			players.add(new Player("Joueur n'" + i +" .", hand));
+			players.add(new Player("Player-" + i +" .", hand));
 		}
-		
-
-		System.out.println("deck: " + deck.getLeftCards());
-		System.out.println("players: " + players.size());
-		
 		
 		
 		s.close();

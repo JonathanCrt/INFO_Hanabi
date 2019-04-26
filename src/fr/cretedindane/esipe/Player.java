@@ -11,5 +11,17 @@ public class Player {
 		this.name = name;
 		this.hand = hand;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.name)
+			.append(" has a hand of: ")
+			.append(this.hand)
+			.append(".\n");
+
+		return sb:
+
+	}
+
 }

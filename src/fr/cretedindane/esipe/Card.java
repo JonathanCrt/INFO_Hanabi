@@ -22,8 +22,14 @@ public class Card {
 	
 	@Override
 	public String toString() {
-		
-	}
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.color)
+			.append("Card. With number ")
+			.append(this.value)
+			.append(".")
+			.append("\n");
+
+		return sb;
 	}
 
 }

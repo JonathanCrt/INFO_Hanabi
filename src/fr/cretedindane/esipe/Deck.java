@@ -45,6 +45,14 @@ public class Deck {
 		return this.deck;
 	}
 
+	@Override
+	public String tOString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("Deck's size: ").append(getLeftCards()).append("\n");
+
+		return sb;
+	}
+
 }
 
 
