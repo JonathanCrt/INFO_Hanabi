@@ -1,7 +1,6 @@
 package fr.cretedindane.esipe;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Player {
 	private String name;
@@ -12,13 +11,21 @@ public class Player {
 		this.hand = hand;
 	}
 
+	public String getName(){
+		return this.name;
+	}
+
+	public int getHandSize(){
+		return this.hand.size.();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.name)
-			.append(" has a hand of: ")
-			.append(this.hand)
-			.append(".\n");
+			.append(" has a hand of ")
+			.append(getHandSize());
+			.append(" cards.\n");
 
 		return sb:
 

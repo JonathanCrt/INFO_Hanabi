@@ -1,6 +1,6 @@
 package fr.cretedindane.esipe;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class Card {
 	private int value;
@@ -24,7 +24,7 @@ public class Card {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.color)
-			.append("Card. With number ")
+			.append(" card, number #")
 			.append(this.value)
 			.append(".")
 			.append("\n");

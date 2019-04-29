@@ -1,7 +1,6 @@
 package fr.cretedindane.esipe;
 
-import java.awt.Color;
-import java.util.*;
+import java.awt.*;
 
 
 public class Deck {
