@@ -1,9 +1,9 @@
 
 public class Action {
     /**Option aura les valeurs de 1, 2 ou 3
-     * Si option == 1, le joueur donne un indice
-     * Si option == 2, le joueur joue une carte
-     * Si optoin == 3, le joueur se défausse d'une de ses cartes */
+     * Si option == 1, the player give a tip
+     * Si option == 2, the player play a card
+     * Si optoin == 3, play drop one of his cards */
     private int option;
 
     public Action(int opt){

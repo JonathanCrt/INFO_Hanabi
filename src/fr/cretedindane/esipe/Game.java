@@ -54,16 +54,23 @@ public class Game {
 			int opt = 0;
 			/** While the opt is diffrent of 1, 2 or 3*/
 			while(opt == 0) {
-				System.out.println("You can tape \n(1)-To give a tip; \n(2)-To play a card; \n(3)-To drop a card. ");
+				/**(1) is disbled in phase 1*/
+				System.out.println("You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
 				Scanner s = new Scanner(System.in);
 				opt = s.nextInt();
-
-				if(opt > 3 || opt < 1){
+				s.close();
+				
+				if (opt > 3 || opt < 2) {
 					System.out.println("Unfit option.");
+					opt = 0;
+				} else if (opt ==1){
+					System.out.println("In phase 1, the first option is disabled.");
 					opt = 0;
 				} else {
 					/** opt == 1, 2 or 3 */
 					Action act = new Action(opt);
+					System.out.println(act);
+					
 					/** NEXT CODE HERE*/
 				}
 			}
