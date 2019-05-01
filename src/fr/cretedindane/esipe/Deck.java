@@ -1,22 +1,13 @@
 package fr.cretedindane.esipe;
 
-import java.awt.*;
-
-
 public class Deck {
 	private ArrayList<Card> deck;
 
 	/** Constructor: Build a deck with 50 cards */
 	public Deck(){
-		ArrayList<Card> deck = new ArrayList<Card>(); 
-		List<Color> colors = new ArrayList<Color>();
-		colors.add(Color.RED);
-		colors.add(Color.GREEN);
-		colors.add(Color.YELLOW);
-		colors.add(Color.BLUE);
-		colors.add(Color.WHITE);
-		
-		for(Color c: colors) {
+		ArrayList<Card> deck = new ArrayList<Card>();
+
+		for(Colors c: Colors.values()) {
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
