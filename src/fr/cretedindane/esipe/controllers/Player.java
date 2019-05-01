@@ -1,4 +1,4 @@
-package fr.cretedindane.esipe;
+package fr.cretedindane.esipe.controllers;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class Player {
 	}
 
 	public int getHandSize(){
-		return this.hand.size.();
+		return this.hand.size();
 	}
 
 	public ArrayList<Card> getHand() {
@@ -26,12 +26,12 @@ public class Player {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.name)
-			.append(" has a hand of ")
-			.append(getHandSize());
-			.append(" cards.\n");
+		sb.append(this.name);
+		sb.append(" has a hand of ");
+		sb.append(getHandSize());
+		sb.append(" cards.\n");
 
-		return sb.toString():
+		return sb.toString();
 
 	}
 

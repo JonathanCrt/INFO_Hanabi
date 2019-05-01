@@ -1,18 +1,18 @@
-package fr.cretedindane.esipe;
+package fr.cretedindane.esipe.controllers;
 
 import java.awt.*;
 
 public class Card {
 	private int value;
-	private Color color;
+	private Colors color;
 	
 	/** Constructor: Init card with a color and a value */
-	public Card(int value, Color color) {
-		this.color = color;
+	public Card(int value, Colors c) {
+		this.color = c;
 		this.value = value;
 	}
 		
-	public Color getCardColor() {
+	public Colors getCardColor() {
 		return this.color;
 	}
 	

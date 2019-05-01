@@ -1,8 +1,13 @@
-package fr.cretedindane.esipe;
+package fr.cretedindane.esipe.controllers;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
+
+import fr.cretedindane.esipe.controllers.Action;
 
 /**CHECK LIST
  * Creation of the main deck
@@ -52,7 +57,7 @@ public class Game {
 			ArrayList<Card> hand = new ArrayList<Card>();
 
 			for (int j = 0; j < handCards; j++) {
-				hand.add(deck.getDeck().get(i));
+				hand.add(deck.getTopCard().get(i));
 				deck.getDeck().remove(i);
 			}
 			players.add(new Player("Player-" + i + " .", hand));
@@ -63,22 +68,22 @@ public class Game {
 		return players.get(player).getHand().remove(carIndex);
 	}
 
-	public boolean canPlayCard(Card playedCard) {
-		Stack<Card> s = fireworks.get(playedCard.getColor());
+	public static boolean canPlayCard(Card playedCard) {
+		Stack<Card> s = fireworks.get(playedCard.getCardColor());
 
 		if (s.isEmpty()) {
-			return playedCard.getNumber() == 1;
+			return playedCard.getCardValue() == 1;
 		}
 
-		return s.peek().getNumber() == playedCard.getNumber() - 1;
+		return s.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
 
-	public int score() {
+	public static int score() {
 		int score = 0;
 		for (Colors s : fireworks.keySet()) {
 			Stack<Card> cards = fireworks.get(s);
 			if (!cards.isEmpty()) {
-				score += cards.peek().getNumber();
+				score += cards.peek().getCardValue();
 			}
 		}
 
@@ -99,7 +104,7 @@ public class Game {
 		return score;
 	}
 
-	public boolean endGame() {
+	public static boolean endGame(Queue<Redtokens> redtokens) {
 		if (redtokens.isEmpty()) {
 			System.out.println("Game over - all red tokens have been played! Players lose!");
 			return true;
@@ -108,7 +113,7 @@ public class Game {
 		boolean fireworksDone = true;
 		for (Colors c : Colors.values()) {
 			Stack<Card> cards = fireworks.get(c);
-			fireworksDone &= (cards.size() == 5 && cards.peek().getNumber() == 5);
+			fireworksDone &= (cards.size() == 5 && cards.peek().getCardValue() == 5);
 		}
 
 		if (fireworksDone) {
@@ -163,7 +168,7 @@ public class Game {
 					System.out.println("In phase 1, the first option is disabled. Please enter an other choise.");
 					opt = 0;
 				} else {
-					Actions act = new Action(opt);
+					Actions act = new Actions(opt);
 					switch (act) {
 						case 1:
 							/** Give a tip */
@@ -177,11 +182,11 @@ public class Game {
 
 							if (canPlayCard(playedCard)) {
 								// put the card on the table
-								fireworks.get(playedCard.getColor()).add(playedCard);
+								fireworks.get(playedCard.getCardColor()).add(playedCard);
 
 								/** Check if the firewaork has been completed */
-								if (playedCard.getNumber() == 5 && bluetokens.size() < tips) {
-									System.out.println("Woo hoo! The " + playedCard.getColor() + " firework has been completed!");
+								if (playedCard.getCardValue() == 5 && bluetokens.size() < tips) {
+									System.out.println("Woo hoo! The " + playedCard.getCardColor() + " firework has been completed!");
 									bluetokens.add(new Bluetokens());
 								}
 
@@ -192,7 +197,7 @@ public class Game {
 							}
 
 							/** Give a new card to the player */
-							newCard = deck.deal();
+							Card newCard = deck.deal();
 							actualPlayer.getHand().add(newCard);
 							break;
 
@@ -219,7 +224,7 @@ public class Game {
 						System.out.println("Last round!");
 					}
 
-					gameOver = endGame();
+					gameOver = endGame(redtokens);
 					if(gameOver == true){
 						System.out.println("Game end.");
 						return;

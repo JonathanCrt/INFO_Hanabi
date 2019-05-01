@@ -1,12 +1,15 @@
+package fr.cretedindane.esipe.controllers;
 
-public class Action {
+
+
+public class Actions {
     /**Option aura les valeurs de 1, 2 ou 3
      * Si option == 1, the player give a tip
      * Si option == 2, the player play a card
      * Si optoin == 3, play drop one of his cards */
     private int option;
 
-    public Action(int opt){
+    public Actions(int opt){
         this.option = opt;
     }
 
@@ -16,7 +19,7 @@ public class Action {
 
     @Override
     public String toString(){
-        StringBuilder sb = new StringbBuilder();
+        StringBuilder sb = new StringBuilder();
         if(this.option == 1){
             sb.append("You can now give a tip. ").append("\n");
         } else if (this.option == 2){

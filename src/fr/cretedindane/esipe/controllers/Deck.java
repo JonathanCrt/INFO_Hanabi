@@ -1,4 +1,7 @@
-package fr.cretedindane.esipe;
+package fr.cretedindane.esipe.controllers;
+
+import java.util.*;
+import java.util.Collections;
 
 public class Deck {
 	private ArrayList<Card> deck;
@@ -33,13 +36,19 @@ public class Deck {
 
 	/** Returns the top card of the deck. */
 	public Card getTopCard() {
-		return cards.poll();
+		//return cards.poll();
+		return deck.poll();
+		
+	}
+
+	public ArrayList<Card> getDeck() {
+		return deck;
 	}
 
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Deck's size: ").append(getLeftCards()).append("\n");
+		sb.append("Deck's size: ").append(deck.size()).append("\n");
 
 		return sb.toString();
 	}

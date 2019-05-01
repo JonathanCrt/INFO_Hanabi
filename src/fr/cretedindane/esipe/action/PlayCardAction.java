@@ -1,7 +1,8 @@
+package fr.cretedindane.esipe.action;
 import java.util.Collections;
 import java.util.List;
 
-public class PlayAction implements Action {
+public class PlayCardAction implements Action {
     private int cardIndex;
 
     @Override

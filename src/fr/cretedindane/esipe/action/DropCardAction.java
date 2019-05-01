@@ -1,5 +1,8 @@
+package fr.cretedindane.esipe.action;
+import java.util.Collections;
+import java.util.List;
 
-public class DropcardAction implements Action {
+public class DropCardAction implements Action {
     private int cardIndex;
 
     public ActionType getActionType(){
@@ -7,6 +10,6 @@ public class DropcardAction implements Action {
     }
 
     public List<Integer> getImpactedCards(){
-        return Collections.singletonList(cardIndexToDiscard);
+        return Collections.singletonList(cardIndex);
     }
 }

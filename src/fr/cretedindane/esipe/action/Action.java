@@ -1,3 +1,4 @@
+package fr.cretedindane.esipe.action;
 import java.util.List;
 
 public interface Action {
