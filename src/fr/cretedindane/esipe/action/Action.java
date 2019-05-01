@@ -1,6 +1,6 @@
 import java.util.List;
 
-public interface Action{
+public interface Action {
     ActionType getActionType();
 
     /** Function that return the impacted card by index */

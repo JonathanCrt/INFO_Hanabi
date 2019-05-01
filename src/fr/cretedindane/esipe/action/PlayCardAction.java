@@ -1,7 +1,7 @@
 import java.util.Collections;
 import java.util.List;
 
-public Class PlayAction implements Action {
+public class PlayAction implements Action {
     private int cardIndex;
 
     @Override

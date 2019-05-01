@@ -1,9 +1,9 @@
 
-public class DropcardAction implements Actions {
+public class DropcardAction implements Action {
     private int cardIndex;
 
     public ActionType getActionType(){
-        return ActionType.DISCARD;
+        return ActionType.DROP;
     }
 
     public List<Integer> getImpactedCards(){

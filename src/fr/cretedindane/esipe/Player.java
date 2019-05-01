@@ -19,7 +19,9 @@ public class Player {
 		return this.hand.size.();
 	}
 
-	public
+	public ArrayList<Card> getHand() {
+		return hand;
+	}
 
 	@Override
 	public String toString() {
