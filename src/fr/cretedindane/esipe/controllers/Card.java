@@ -1,6 +1,5 @@
 package fr.cretedindane.esipe.controllers;
 
-import java.awt.*;
 
 public class Card {
 	private int value;

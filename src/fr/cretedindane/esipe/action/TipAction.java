@@ -1,4 +1,7 @@
 package fr.cretedindane.esipe.action;
-/** could be a card or a number
-    should we create an enum?
+
+/**
+ * Create an TipType enum with Colors(enum from controllers) and Number;
+ * Create two constructors in TipAction, one with Colors and the other with Number;
+ * Also override Action() methods.
  */

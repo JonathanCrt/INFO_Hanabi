@@ -24,6 +24,15 @@ public class Player {
 	}
 
 	@Override
+	public boolean equals(Object obj){
+		if(!(obj instanceof Player)){
+			return false;
+		}
+		Player p = (Player) obj;
+		return(this.getHand().equals(p.getHand())  && this.getName().equals(p.getName()));
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.name);

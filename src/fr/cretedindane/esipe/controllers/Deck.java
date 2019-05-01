@@ -4,11 +4,11 @@ import java.util.*;
 import java.util.Collections;
 
 public class Deck {
-	private ArrayList<Card> deck;
+	private Queue<Card> deck;
 
 	/** Constructor: Build a deck with 50 cards */
 	public Deck(){
-		ArrayList<Card> deck = new ArrayList<Card>();
+		LinkedList<Card> deck = new LinkedList<Card>();
 
 		for(Colors c: Colors.values()) {
 			deck.add(new Card(1, c));
@@ -36,12 +36,11 @@ public class Deck {
 
 	/** Returns the top card of the deck. */
 	public Card getTopCard() {
-		//return cards.poll();
 		return deck.poll();
 		
 	}
 
-	public ArrayList<Card> getDeck() {
+	public Queue<Card> getDeck() {
 		return deck;
 	}
 

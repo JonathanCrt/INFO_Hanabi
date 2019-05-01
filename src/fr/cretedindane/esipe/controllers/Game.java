@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 
-import fr.cretedindane.esipe.controllers.Action;
+import fr.cretedindane.esipe.controllers.*;
 
 /**CHECK LIST
  * Creation of the main deck
@@ -57,15 +57,15 @@ public class Game {
 			ArrayList<Card> hand = new ArrayList<Card>();
 
 			for (int j = 0; j < handCards; j++) {
-				hand.add(deck.getTopCard().get(i));
+				hand.add(deck.getTopCard());
 				deck.getDeck().remove(i);
 			}
-			players.add(new Player("Player-" + i + " .", hand));
+			players.add(new Player("Player-"+i, hand));
 		}
 	}
 
-	public Card removeCardFromHand(Player player, int carIndex) {
-		return players.get(player).getHand().remove(carIndex);
+	public static Card removeCardFromHand(Player player, int cardIndex) {
+		return player.getHand().remove(cardIndex);
 	}
 
 	public static boolean canPlayCard(Card playedCard) {
@@ -152,7 +152,9 @@ public class Game {
 			Player actualPlayer = players.get(i);
 			System.out.println(actualPlayer.getName() + " , it's your turn to play!\n");
 
+			/** Action type: 1-Tip, 2-Play or 3-Drop */
 			int opt = 0;
+
 			/** While the opt is diffrent of 1, 2 or 3*/
 			while(opt == 0) {
 				/**(1) is disbled in phase 1*/
@@ -168,8 +170,7 @@ public class Game {
 					System.out.println("In phase 1, the first option is disabled. Please enter an other choise.");
 					opt = 0;
 				} else {
-					Actions act = new Actions(opt);
-					switch (act) {
+					switch (opt) {
 						case 1:
 							/** Give a tip */
 							// disabled for phase 1
@@ -177,7 +178,10 @@ public class Game {
 
 						case 2:
 							/** Play a card */
-							Card playedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
+							System.out.println("Wich card would you like to discard?");
+							Scanner scan = new Scanner(System.in);
+							int index = scan.nextInt();
+							Card playedCard = removeCardFromHand(actualPlayer, index);
 							System.out.println(actualPlayer.getName() + " played a " + playedCard);
 
 							if (canPlayCard(playedCard)) {
@@ -186,7 +190,7 @@ public class Game {
 
 								/** Check if the firewaork has been completed */
 								if (playedCard.getCardValue() == 5 && bluetokens.size() < tips) {
-									System.out.println("Woo hoo! The " + playedCard.getCardColor() + " firework has been completed!");
+									System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
 									bluetokens.add(new Bluetokens());
 								}
 
@@ -197,17 +201,17 @@ public class Game {
 							}
 
 							/** Give a new card to the player */
-							Card newCard = deck.deal();
+							Card newCard = deck.getTopCard();
 							actualPlayer.getHand().add(newCard);
 							break;
 
 						case 3:
 							/** Discard a card */
-							Card discardedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
+							Card discardedCard = removeCardFromHand(actualPlayer, i);
 
 							/** Give a new card to the player */
-							Card newCard = deck.deal();
-							actualPlayer.add(newCard);
+							Card newOtherCard = deck.getTopCard();
+							actualPlayer.getHand().add(newOtherCard);
 
 							/** Add a new blue token
 							if (bluetokens.size() < tips) {
@@ -215,7 +219,7 @@ public class Game {
 							}
 							*/
 
-							System.out.println(player.getName() + " discarded a " + discardedCard);
+							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 							break;
 					}
 
