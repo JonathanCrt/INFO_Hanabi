@@ -3,7 +3,7 @@ Project in Java language, using ZEN5 as framwork.
 
 The actual project is for our engineering school ESIPE.
 
-Chahinaz DINDANE and Johnathan CRETE are both in first year of they IT cycle.
+Chahinaz DINDANE and Jonathan CRETE are both in first year of they IT cycle.
 
 ## Phase 1 of project:
 Really simple interface: Only two players, no blue token used, infinit option selection, both players can see theirs cards.
