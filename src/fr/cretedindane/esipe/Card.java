@@ -29,7 +29,7 @@ public class Card {
 			.append(".")
 			.append("\n");
 
-		return sb;
+		return sb.toString();
 	}
 
 }

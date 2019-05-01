@@ -19,6 +19,8 @@ public class Player {
 		return this.hand.size.();
 	}
 
+	public
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -27,7 +29,7 @@ public class Player {
 			.append(getHandSize());
 			.append(" cards.\n");
 
-		return sb:
+		return sb.toString():
 
 	}
 

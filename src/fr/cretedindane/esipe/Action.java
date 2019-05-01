@@ -21,9 +21,11 @@ public class Action {
             sb.append("You can now give a tip. ").append("\n");
         } else if (this.option == 2){
             sb.append("You can now play a card. ").append("\n");
-        } else if (this.option == 3){
+        } else {
             sb.append("You can now drop a card. ").append("\n");
         }
+
+        return sb.toString();
 
     }
 }

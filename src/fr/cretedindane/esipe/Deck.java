@@ -7,7 +7,7 @@ public class Deck {
 	private ArrayList<Card> deck;
 
 	/** Constructor: Build a deck with 50 cards */
-		public Deck(){
+	public Deck(){
 		ArrayList<Card> deck = new ArrayList<Card>(); 
 		List<Color> colors = new ArrayList<Color>();
 		colors.add(Color.RED);
@@ -36,20 +36,21 @@ public class Deck {
 	}
 		
 	/** Method returns number of cards left in the deck.*/
-	public int getLeftCards(){
+	public int size(){
 		return this.deck.size();
 	}
-	
-	public ArrayList<Card> getDeck(){
-		return this.deck;
+
+	/** Returns the top card of the deck. */
+	public Card getTopCard() {
+		return cards.poll();
 	}
 
 	@Override
-	public String tOString(){
+	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("Deck's size: ").append(getLeftCards()).append("\n");
 
-		return sb;
+		return sb.toString();
 	}
 
 }
