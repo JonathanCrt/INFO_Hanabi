@@ -38,8 +38,12 @@ public class Player {
 		sb.append(this.name);
 		sb.append(" has a hand of ");
 		sb.append(getHandSize());
-		sb.append(" cards.\n");
+		sb.append(" cards: ");
 
+		for(int i=0; i<getHand().size(); i++){
+			sb.append(this.getHand().get(i)).append(" ");
+		}
+		sb.append(".\n");
 		return sb.toString();
 
 	}
