@@ -32,35 +32,24 @@ public class Game {
 	private static boolean gameOver = false;
 	private static int numberOfPlayers;
 
-	public void creatingPlayers(){
-		int handCards = 0;
-
-		while (handCards == 0) {
-			System.out.println("How many players are you? ");
-			Scanner s = new Scanner(System.in);
-			int numberOfPlayers = s.nextInt();
-
-			if (numberOfPlayers == 2 || numberOfPlayers == 3) {
-				handCards = 5;
-			} else if (numberOfPlayers == 4 || numberOfPlayers == 5) {
-				handCards = 4;
-			} else {
-				System.out.println("The game needs 2, 3, 4 or 5 players.");
-				handCards = 0;
-			}
-
-			s.close();
-		}
-
+	protected static void creatingPlayers(int numberOfPlayers, int handCards){
+		
+		Scanner nameP = new Scanner(System.in);
+		
 		/** Creating the players */
 		for (int i = 0; i < numberOfPlayers; i++) {
+			String name = null;
 			ArrayList<Card> hand = new ArrayList<Card>();
-
+			
 			for (int j = 0; j < handCards; j++) {
 				hand.add(deck.getTopCard());
-				deck.getDeck().remove(i);
-			}
-			players.add(new Player("Player-"+i, hand));
+				deck.getDeck().remove(j);
+			}			
+			
+			System.out.println("Quel est le nom du " + (i+1) + "ème joueur? ");
+			name = nameP.nextLine();
+						
+			players.add(new Player(name, hand));
 		}
 	}
 
@@ -132,6 +121,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
+		int handCards = 0;
 		deck = new Deck();
 		players = new LinkedList<Player>();
 		Queue<Redtokens> redtokens = new LinkedList<>();
@@ -146,6 +136,24 @@ public class Game {
 		}
 
 
+		System.out.println("How many players are you? ");
+		Scanner s = new Scanner(System.in);
+		while (handCards == 0) {
+			numberOfPlayers = s.nextInt();
+			s.nextLine();
+			
+			if (numberOfPlayers == 2 || numberOfPlayers == 3) {
+				handCards = 5;
+			} else if (numberOfPlayers == 4 || numberOfPlayers == 5) {
+				handCards = 4;
+			} else {
+				System.out.println("The game needs 2, 3, 4 or 5 players.");
+				handCards = 0;
+			}
+			
+		}
+		
+		creatingPlayers(numberOfPlayers, handCards);
 		/** Now that the players are ready with they hand,
 		 *  the first player plays: */
 		for(int i=0; i<numberOfPlayers; i++){
@@ -159,9 +167,9 @@ public class Game {
 			while(opt == 0) {
 				/**(1) is disbled in phase 1*/
 				System.out.println("You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
-				Scanner s = new Scanner(System.in);
-				opt = s.nextInt();
-				s.close();
+				Scanner sc = new Scanner(System.in);
+				opt = sc.nextInt();
+				sc.close();
 
 				if (opt > 3 || opt < 1) {
 					System.out.println("Unfit option.");
