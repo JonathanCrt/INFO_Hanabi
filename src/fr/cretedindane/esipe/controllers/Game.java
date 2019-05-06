@@ -1,11 +1,6 @@
 package fr.cretedindane.esipe.controllers;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 import fr.cretedindane.esipe.controllers.*;
 
@@ -24,47 +19,36 @@ public class Game {
 	private int play = 0;
 	private Queue<Redtokens> redtokens;
 	private Queue<Bluetokens> bluetokens;
-	protected static int tips = 8;
-	private static Deck deck;
 	private static LinkedList<Player> players;
 	private static Map<Colors, Stack<Card>> fireworks;
+	private static Deck deck;
 	private static boolean lastAction = false;
 	private static boolean gameOver = false;
 	private static int numberOfPlayers;
+	private static int tips = 8;
 
-	protected static void creatingPlayers(int numberOfPlayers, int handCards){
-		
+	protected static void setPlayers(int numberOfPlayers, int handCards){
 		Scanner nameP = new Scanner(System.in);
-		
+
 		/** Creating the players */
 		for (int i = 0; i < numberOfPlayers; i++) {
 			String name = null;
 			ArrayList<Card> hand = new ArrayList<Card>();
-			
+
 			for (int j = 0; j < handCards; j++) {
 				hand.add(deck.getTopCard());
 				deck.getDeck().remove(j);
-			}			
-			
-			System.out.println("Quel est le nom du " + (i+1) + "ème joueur? ");
+			}
+
+			System.out.println("What's the name or the " + (i+1) + "th player? ");
 			name = nameP.nextLine();
-						
+
 			players.add(new Player(name, hand));
 		}
 	}
 
 	public static Card removeCardFromHand(Player player, int cardIndex) {
 		return player.getHand().remove(cardIndex);
-	}
-
-	public static boolean canPlayCard(Card playedCard) {
-		Stack<Card> s = fireworks.get(playedCard.getCardColor());
-
-		if (s.isEmpty()) {
-			return playedCard.getCardValue() == 1;
-		}
-
-		return s.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
 
 	public static int score() {
@@ -91,6 +75,16 @@ public class Game {
 		}
 
 		return score;
+	}
+
+	public static boolean canPlayCard(Card playedCard) {
+		Stack<Card> stck = fireworks.get(playedCard.getCardColor());
+
+		if (stck.isEmpty()) {
+			return playedCard.getCardValue() == 1;
+		}
+
+		return stck.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
 
 	public static boolean endGame(Queue<Redtokens> redtokens) {
@@ -124,8 +118,13 @@ public class Game {
 		int handCards = 0;
 		deck = new Deck();
 		players = new LinkedList<Player>();
+		fireworks = new HashMap<>();
 		Queue<Redtokens> redtokens = new LinkedList<>();
 		Queue<Bluetokens> bluetokens = new LinkedList<>();
+
+		for (Colors c : Colors.values()) {
+			fireworks.put(c, new Stack<>());
+		}
 
 		for (int i=0; i<8; i++) {
 			bluetokens.add(new Bluetokens());
@@ -141,7 +140,7 @@ public class Game {
 		while (handCards == 0) {
 			numberOfPlayers = s.nextInt();
 			s.nextLine();
-			
+
 			if (numberOfPlayers == 2 || numberOfPlayers == 3) {
 				handCards = 5;
 			} else if (numberOfPlayers == 4 || numberOfPlayers == 5) {
@@ -150,10 +149,14 @@ public class Game {
 				System.out.println("The game needs 2, 3, 4 or 5 players.");
 				handCards = 0;
 			}
-			
+
 		}
-		
-		creatingPlayers(numberOfPlayers, handCards);
+
+		setPlayers(numberOfPlayers, handCards);
+		for(Player p: players){
+			System.out.println(p);
+		}
+
 		/** Now that the players are ready with they hand,
 		 *  the first player plays: */
 		for(int i=0; i<numberOfPlayers; i++){
@@ -169,37 +172,39 @@ public class Game {
 				System.out.println("You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
 				Scanner sc = new Scanner(System.in);
 				opt = sc.nextInt();
-				sc.close();
 
 				if (opt > 3 || opt < 1) {
 					System.out.println("Unfit option.");
 					opt = 0;
 				} else if (opt ==1) {
-					System.out.println("In phase 1, the first option is disabled. Please enter an other choise.");
+					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
 					opt = 0;
 				} else {
 					switch (opt) {
 						case 1:
 							/** Give a tip */
 							// disabled for phase 1
+
+							System.out.println("Actual fireworks == " + fireworks);
 							break;
 
 						case 2:
 							/** Play a card */
-							System.out.println("Wich card would you like to discard?");
+							System.out.println("Wich card would you like to play?");
 							Scanner scan = new Scanner(System.in);
-							int index = scan.nextInt();
+							int index = scan.nextInt() - 1;
 							Card playedCard = removeCardFromHand(actualPlayer, index);
 							System.out.println(actualPlayer.getName() + " played a " + playedCard);
 
 							if (canPlayCard(playedCard)) {
 								// put the card on the table
 								fireworks.get(playedCard.getCardColor()).add(playedCard);
+								System.out.println(playedCard);
 
-								/** Check if the firewaork has been completed */
+								/** Check if the firework has been completed */
 								if (playedCard.getCardValue() == 5 && bluetokens.size() < tips) {
 									System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
-									bluetokens.add(new Bluetokens());
+									if(bluetokens.size() < 8) bluetokens.add(new Bluetokens());
 								}
 
 							} else {
@@ -211,15 +216,23 @@ public class Game {
 							/** Give a new card to the player */
 							Card newCard = deck.getTopCard();
 							actualPlayer.getHand().add(newCard);
+							System.out.println(actualPlayer);
+							System.out.println("Actual fireworks == " + fireworks);
 							break;
 
 						case 3:
 							/** Discard a card */
-							Card discardedCard = removeCardFromHand(actualPlayer, i);
+							System.out.println("Wich card would you like to play?");
+							Scanner scanned = new Scanner(System.in);
+							int inde = scanned.nextInt() - 1;
+							Card discardedCard = removeCardFromHand(actualPlayer, inde);
+
+							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
 							/** Give a new card to the player */
 							Card newOtherCard = deck.getTopCard();
 							actualPlayer.getHand().add(newOtherCard);
+							System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
 
 							/** Add a new blue token
 							if (bluetokens.size() < tips) {
@@ -227,7 +240,7 @@ public class Game {
 							}
 							*/
 
-							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
+							System.out.println("Actual fireworks == " + fireworks);
 							break;
 					}
 
@@ -244,11 +257,6 @@ public class Game {
 				}
 			}
 		}
-
-
-		
-
-		
 	}
 
 }
