@@ -22,11 +22,11 @@ public class Card {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("#")
+		sb.append("(")
 			.append(this.value)
-			.append("# - ")
+			.append(", ")
 			.append(this.color)
-			.append(" ");
+			.append(" )  ");
 
 		return sb.toString();
 	}

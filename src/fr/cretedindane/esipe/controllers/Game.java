@@ -16,9 +16,8 @@ import fr.cretedindane.esipe.controllers.*;
 
 
 public class Game {
-	private int play = 0;
-	private Queue<Redtokens> redtokens;
-	private Queue<Bluetokens> bluetokens;
+	private static Queue<Redtokens> redtokens;
+	private static Queue<Bluetokens> bluetokens;
 	private static LinkedList<Player> players;
 	private static Map<Colors, Stack<Card>> fireworks;
 	private static Deck deck;
@@ -87,7 +86,7 @@ public class Game {
 		return stck.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
 
-	public static boolean endGame(Queue<Redtokens> redtokens) {
+	public static boolean endGame() {
 		if (redtokens.isEmpty()) {
 			System.out.println("Game over - all red tokens have been played! Players lose!");
 			return true;
@@ -107,7 +106,7 @@ public class Game {
 		}
 
 		if (lastAction == true) {
-			System.out.println("Game over - deck is empty! Players lose!");
+			System.out.print("Game over - deck is empty! Players lose!");
 			return true;
 		}
 
@@ -119,8 +118,8 @@ public class Game {
 		deck = new Deck();
 		players = new LinkedList<Player>();
 		fireworks = new HashMap<>();
-		Queue<Redtokens> redtokens = new LinkedList<>();
-		Queue<Bluetokens> bluetokens = new LinkedList<>();
+		redtokens = new LinkedList<>();
+		bluetokens = new LinkedList<>();
 
 		for (Colors c : Colors.values()) {
 			fireworks.put(c, new Stack<>());
@@ -157,35 +156,27 @@ public class Game {
 			System.out.println(p);
 		}
 
-		/** Now that the players are ready with they hand,
-		 *  the first player plays: */
-		for(int i=0; i<numberOfPlayers; i++){
-			Player actualPlayer = players.get(i);
-			System.out.println(actualPlayer.getName() + " , it's your turn to play!\n");
-
+		/** While the game's still on... */
+            while(!(endGame())) {
 			/** Action type: 1-Tip, 2-Play or 3-Drop */
 			int opt = 0;
 
-			/** While the opt is diffrent of 1, 2 or 3*/
-			while(opt == 0) {
-				/**(1) is disbled in phase 1*/
-				System.out.println("You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
+			/** Let's make the players play! */
+            for(Player actualPlayer: players){
+				/**(1) is disabled in phase 1*/
+				System.out.println(actualPlayer.getName()+ "'s turn. You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
 				Scanner sc = new Scanner(System.in);
 				opt = sc.nextInt();
 
 				if (opt > 3 || opt < 1) {
 					System.out.println("Unfit option.");
-					opt = 0;
 				} else if (opt ==1) {
 					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
-					opt = 0;
 				} else {
 					switch (opt) {
 						case 1:
 							/** Give a tip */
 							// disabled for phase 1
-
-							System.out.println("Actual fireworks == " + fireworks);
 							break;
 
 						case 2:
@@ -206,18 +197,18 @@ public class Game {
 									System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
 									if(bluetokens.size() < 8) bluetokens.add(new Bluetokens());
 								}
-
 							} else {
-								/** if the player put the wrong card on the table */
+								// if the player put the wrong card on the table
 								redtokens.poll();
 								System.out.println("Wrong card " + actualPlayer.getName() + "! (" + playedCard + " cannot be played)!");
+								System.out.println("Red tokens left: " + redtokens.size());
 							}
 
 							/** Give a new card to the player */
 							Card newCard = deck.getTopCard();
 							actualPlayer.getHand().add(newCard);
 							System.out.println(actualPlayer);
-							System.out.println("Actual fireworks == " + fireworks);
+							System.out.println("\nActual fireworks: " + fireworks);
 							break;
 
 						case 3:
@@ -248,14 +239,9 @@ public class Game {
 						lastAction = true;
 						System.out.println("Last round!");
 					}
-
-					gameOver = endGame(redtokens);
-					if(gameOver == true){
-						System.out.println("Game end.");
-						return;
-					}
 				}
 			}
+
 		}
 	}
 
