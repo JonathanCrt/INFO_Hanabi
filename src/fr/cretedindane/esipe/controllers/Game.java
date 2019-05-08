@@ -2,19 +2,6 @@ package fr.cretedindane.esipe.controllers;
 
 import java.util.*;
 
-import fr.cretedindane.esipe.controllers.*;
-
-/**CHECK LIST
- * Creation of the main deck
- * Creation of the players
- * Creation of the hand of the players
- * Starting the game by going around starting by the first player
- * Players choises 1, 2 et 3
- * End of the game: empty deck -> last round
- * End of the game: redTokens = 0
- * End of the game: colored Fireworks have a size of 5 */
-
-
 public class Game {
 	private static Queue<Redtokens> redtokens;
 	private static Queue<Bluetokens> bluetokens;
@@ -22,10 +9,15 @@ public class Game {
 	private static Map<Colors, Stack<Card>> fireworks;
 	private static Deck deck;
 	private static boolean lastAction = false;
-	private static boolean gameOver = false;
 	private static int numberOfPlayers;
 	private static int tips = 8;
-
+	
+	/**
+	 * create players with our hands
+	 * @param numberOfPlayers
+	 * @param handCards
+	 */
+	@SuppressWarnings({ "resource", "unlikely-arg-type" })
 	protected static void setPlayers(int numberOfPlayers, int handCards){
 		Scanner nameP = new Scanner(System.in);
 
@@ -45,11 +37,23 @@ public class Game {
 			players.add(new Player(name, hand));
 		}
 	}
-
+	
+	/**
+	 * returns selected card by player
+	 * @param player
+	 * @param cardIndex
+	 * @return 
+	 */
 	public static Card removeCardFromHand(Player player, int cardIndex) {
 		return player.getHand().remove(cardIndex);
 	}
-
+	
+	
+	/**
+	 * returns score of the fireworks
+	 * nothing
+	 * @return
+	 */
 	public static int score() {
 		int score = 0;
 		for (Colors s : fireworks.keySet()) {
@@ -75,17 +79,29 @@ public class Game {
 
 		return score;
 	}
-
+	/**
+	 * which check if can we play the card, elsewhere it discarded.
+	 * @param playedCard
+	 * @return false/true
+	 */
 	public static boolean canPlayCard(Card playedCard) {
 		Stack<Card> stck = fireworks.get(playedCard.getCardColor());
-
+		
+		/* check if the card in handPlayer is 1 : true */
 		if (stck.isEmpty()) {
 			return playedCard.getCardValue() == 1;
 		}
-
+		/* peek : take the card into stack and the card in handPlayer
+		 * if equals, return true */
 		return stck.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
-
+	
+	
+	/**
+	 * marks end of the game and notices players of the score
+	 * nothing
+	 * @return
+	 */
 	public static boolean endGame() {
 		if (redtokens.isEmpty()) {
 			System.out.println("Game over - all red tokens have been played! Players lose!");
@@ -113,7 +129,9 @@ public class Game {
 		return false;
 	}
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
+		// init all
 		int handCards = 0;
 		deck = new Deck();
 		players = new LinkedList<Player>();
@@ -181,9 +199,11 @@ public class Game {
 
 						case 2:
 							/** Play a card */
-							System.out.println("Wich card would you like to play?");
+							System.out.println("Which card would you like to play?");
 							Scanner scan = new Scanner(System.in);
 							int index = scan.nextInt() - 1;
+							/* check if the index is right */
+							
 							Card playedCard = removeCardFromHand(actualPlayer, index);
 							System.out.println(actualPlayer.getName() + " played a " + playedCard);
 
@@ -213,9 +233,11 @@ public class Game {
 
 						case 3:
 							/** Discard a card */
-							System.out.println("Wich card would you like to play?");
+							System.out.println("Which card would you like to discard?");
 							Scanner scanned = new Scanner(System.in);
 							int inde = scanned.nextInt() - 1;
+							/* check if the index is right */
+							
 							Card discardedCard = removeCardFromHand(actualPlayer, inde);
 
 							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
@@ -236,9 +258,12 @@ public class Game {
 					}
 
 					if (deck.size() == 1) {
-						lastAction = true;
-						System.out.println("Last round!");
-					}
+                        System.out.println("Last round!");
+                    }
+
+                    if(deck.size() == 0){
+                        lastAction = true;
+                    }
 				}
 			}
 

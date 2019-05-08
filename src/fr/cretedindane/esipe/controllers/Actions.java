@@ -8,7 +8,7 @@ public class Actions {
      * Si option == 2, the player play a card
      * Si optoin == 3, play drop one of his cards */
     private int option;
-
+    
     public Actions(int opt){
         this.option = opt;
     }
