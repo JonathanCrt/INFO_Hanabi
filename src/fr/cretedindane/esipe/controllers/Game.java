@@ -180,23 +180,23 @@ public class Game {
 			/** Let's make the players play! */
             for(Player actualPlayer: players){
                 /** Action type: 1-Tip, 2-Play or 3-Drop */
-                int opt = -1;
+                int action = -1;
 
 				/**(1) is disabled in phase 1*/
-                while (opt == -1) {
+                while (action == -1) {
                     System.out.println("-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
                     Scanner sc = new Scanner(System.in);
-                    opt = sc.nextInt();
-                    if (opt > 3 || opt < 1){
+                    action = sc.nextInt();
+                    if (action > 3 || action < 1){
                         System.out.println("Unfit option.");
-                        opt = -1;
+                        action = -1;
                     }
                 }
 
-				if (opt ==1) {
+				if (action ==1) {
 					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
 				} else {
-					switch (opt) {
+					switch (action) {
 						case 1:
 							/** Give a tip */
 							// disabled for phase 1
@@ -260,7 +260,6 @@ public class Game {
                             }
 							
 							Card discardedCard = removeCardFromHand(actualPlayer, inde);
-
 							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
 							/** Give a new card to the player */
