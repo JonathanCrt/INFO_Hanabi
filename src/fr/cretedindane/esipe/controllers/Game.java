@@ -11,6 +11,7 @@ public class Game {
 	private static boolean lastAction = false;
 	private static int numberOfPlayers;
 	private static int tips = 8;
+	private static int handCards = 0;
 	
 	/**
 	 * create players with our hands
@@ -132,7 +133,6 @@ public class Game {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		// init all
-		int handCards = 0;
 		deck = new Deck();
 		players = new LinkedList<Player>();
 		fireworks = new HashMap<>();
@@ -176,19 +176,24 @@ public class Game {
 
 		/** While the game's still on... */
             while(!(endGame())) {
-			/** Action type: 1-Tip, 2-Play or 3-Drop */
-			int opt = 0;
 
 			/** Let's make the players play! */
             for(Player actualPlayer: players){
-				/**(1) is disabled in phase 1*/
-				System.out.println(actualPlayer.getName()+ "'s turn. You can tape \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
-				Scanner sc = new Scanner(System.in);
-				opt = sc.nextInt();
+                /** Action type: 1-Tip, 2-Play or 3-Drop */
+                int opt = -1;
 
-				if (opt > 3 || opt < 1) {
-					System.out.println("Unfit option.");
-				} else if (opt ==1) {
+				/**(1) is disabled in phase 1*/
+                while (opt == -1) {
+                    System.out.println("-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
+                    Scanner sc = new Scanner(System.in);
+                    opt = sc.nextInt();
+                    if (opt > 3 || opt < 1){
+                        System.out.println("Unfit option.");
+                        opt = -1;
+                    }
+                }
+
+				if (opt ==1) {
 					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
 				} else {
 					switch (opt) {
@@ -199,11 +204,19 @@ public class Game {
 
 						case 2:
 							/** Play a card */
-							System.out.println("Which card would you like to play?");
-							Scanner scan = new Scanner(System.in);
-							int index = scan.nextInt() - 1;
-							/* check if the index is right */
-							
+
+                            // check if the selected index of card exists
+                            int index = -1;
+                            while(index == -1) {
+                                System.out.println("Which card would you like to play?");
+                                Scanner scan = new Scanner(System.in);
+                                index = scan.nextInt();
+                                if(index > handCards-1 || index < 0) {
+                                    System.out.println("\nWARNING! You have "+ handCards + " cards in your hand.\n");
+                                    index = -1;
+                                }
+                            }
+
 							Card playedCard = removeCardFromHand(actualPlayer, index);
 							System.out.println(actualPlayer.getName() + " played a " + playedCard);
 
@@ -233,10 +246,18 @@ public class Game {
 
 						case 3:
 							/** Discard a card */
-							System.out.println("Which card would you like to discard?");
-							Scanner scanned = new Scanner(System.in);
-							int inde = scanned.nextInt() - 1;
-							/* check if the index is right */
+
+                            // check if the selected index of card exists
+							int inde = -1;
+                            while(inde == -1) {
+                                System.out.println("Which card would you like to discard?");
+                                Scanner scan = new Scanner(System.in);
+                                inde = scan.nextInt();
+                                if(inde > handCards-1 || inde < 0) {
+                                    System.out.println("\nWARNING!! You have "+ handCards + " cards in your hand.\n");
+                                    inde = -1;
+                                }
+                            }
 							
 							Card discardedCard = removeCardFromHand(actualPlayer, inde);
 
