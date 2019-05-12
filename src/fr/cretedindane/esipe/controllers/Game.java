@@ -12,7 +12,8 @@ public class Game {
 	private static int numberOfPlayers;
 	private static int tips = 8;
 	private static int handCards = 0;
-	
+	// count till last round
+	private static int round = 0;
 	/**
 	 * create players with our hands
 	 * @param numberOfPlayers
@@ -122,7 +123,7 @@ public class Game {
 			return true;
 		}
 
-		if (lastAction == true) {
+		if (round == numberOfPlayers) {
 			System.out.print("Game over - deck is empty! Players lose!");
 			return true;
 		}
@@ -238,9 +239,13 @@ public class Game {
 							}
 
 							/** Give a new card to the player */
-							Card newCard = deck.getTopCard();
-							actualPlayer.getHand().add(newCard);
-							System.out.println(actualPlayer);
+							if(deck.size() == 0) {
+                                Card newCard = deck.getTopCard();
+                                actualPlayer.getHand().add(newCard);
+                                System.out.println(actualPlayer);
+                            } else {
+							    System.out.println("No more cards left. "+(numberOfPlayers-round)+" rounds to go.");
+                            }
 							System.out.println("\nActual fireworks: " + fireworks);
 							break;
 
@@ -263,9 +268,13 @@ public class Game {
 							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
 							/** Give a new card to the player */
-							Card newOtherCard = deck.getTopCard();
-							actualPlayer.getHand().add(newOtherCard);
-							System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
+							if(deck.size() != 0) {
+                                Card newOtherCard = deck.getTopCard();
+                                actualPlayer.getHand().add(newOtherCard);
+                                System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
+                            } else {
+                                System.out.println("No more cards left. "+(numberOfPlayers-round)+" rounds to go.");
+                            }
 
 							/** Add a new blue token
 							if (bluetokens.size() < tips) {
@@ -281,8 +290,8 @@ public class Game {
                         System.out.println("Last round!");
                     }
 
-                    if(deck.size() == 0){
-                        lastAction = true;
+                    if(deck.size() == 0 && round < numberOfPlayers){
+                        round ++;
                     }
 				}
 			}
