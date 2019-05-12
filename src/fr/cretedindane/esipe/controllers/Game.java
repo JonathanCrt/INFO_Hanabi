@@ -8,12 +8,13 @@ public class Game {
 	private static LinkedList<Player> players;
 	private static Map<Colors, Stack<Card>> fireworks;
 	private static Deck deck;
-	private static boolean lastAction = false;
 	private static int numberOfPlayers;
 	private static int tips = 8;
 	private static int handCards = 0;
 	// count till last round
-	private static int round = 0;
+	private static boolean lastRound = false;
+	private static int round = -1;
+
 	/**
 	 * create players with our hands
 	 * @param numberOfPlayers
@@ -81,6 +82,7 @@ public class Game {
 
 		return score;
 	}
+
 	/**
 	 * which check if can we play the card, elsewhere it discarded.
 	 * @param playedCard
@@ -93,16 +95,16 @@ public class Game {
 		if (stck.isEmpty()) {
 			return playedCard.getCardValue() == 1;
 		}
+
 		/* peek : take the card into stack and the card in handPlayer
 		 * if equals, return true */
 		return stck.peek().getCardValue() == playedCard.getCardValue() - 1;
 	}
-	
-	
+
 	/**
 	 * marks end of the game and notices players of the score
 	 * nothing
-	 * @return
+	 * @return true if end of game or false
 	 */
 	public static boolean endGame() {
 		if (redtokens.isEmpty()) {
@@ -123,15 +125,17 @@ public class Game {
 			return true;
 		}
 
+		System.out.println("END nb players == "+numberOfPlayers);
 		if (round == numberOfPlayers) {
 			System.out.print("Game over - deck is empty! Players lose!");
 			return true;
 		}
 
+
 		return false;
 	}
 
-	@SuppressWarnings("resource")
+
 	public static void main(String[] args) {
 		// init all
 		deck = new Deck();
@@ -139,6 +143,7 @@ public class Game {
 		fireworks = new HashMap<>();
 		redtokens = new LinkedList<>();
 		bluetokens = new LinkedList<>();
+		System.out.println(deck);
 
 		for (Colors c : Colors.values()) {
 			fireworks.put(c, new Stack<>());
@@ -175,17 +180,16 @@ public class Game {
 			System.out.println(p);
 		}
 
-		/** While the game's still on... */
-            while(!(endGame())) {
-
 			/** Let's make the players play! */
             for(Player actualPlayer: players){
+				/** While the game's still on... */
+				while(!(endGame())) {
                 /** Action type: 1-Tip, 2-Play or 3-Drop */
                 int action = -1;
 
 				/**(1) is disabled in phase 1*/
                 while (action == -1) {
-                    System.out.println("-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
+                    System.out.println("\n-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
                     Scanner sc = new Scanner(System.in);
                     action = sc.nextInt();
                     if (action > 3 || action < 1){
@@ -193,7 +197,6 @@ public class Game {
                         action = -1;
                     }
                 }
-
 				if (action ==1) {
 					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
 				} else {
@@ -239,13 +242,16 @@ public class Game {
 							}
 
 							/** Give a new card to the player */
-							if(deck.size() == 0) {
+							if(deck.size() != 0) {
                                 Card newCard = deck.getTopCard();
                                 actualPlayer.getHand().add(newCard);
                                 System.out.println(actualPlayer);
                             } else {
-							    System.out.println("No more cards left. "+(numberOfPlayers-round)+" rounds to go.");
-                            }
+								if(numberOfPlayers-round-1 == 0){
+									System.out.println("\n -- Last round played!\n");
+								} else {
+									System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
+								}                            }
 							System.out.println("\nActual fireworks: " + fireworks);
 							break;
 
@@ -263,36 +269,39 @@ public class Game {
                                     inde = -1;
                                 }
                             }
-							
+
 							Card discardedCard = removeCardFromHand(actualPlayer, inde);
 							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
 							/** Give a new card to the player */
-							if(deck.size() != 0) {
-                                Card newOtherCard = deck.getTopCard();
-                                actualPlayer.getHand().add(newOtherCard);
-                                System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
-                            } else {
-                                System.out.println("No more cards left. "+(numberOfPlayers-round)+" rounds to go.");
-                            }
-
-							/** Add a new blue token
-							if (bluetokens.size() < tips) {
-								bluetokens.add(new Bluetokens());
+							if(deck.size() != 0){
+								Card newOtherCard = deck.getTopCard();
+								actualPlayer.getHand().add(newOtherCard);
+								System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
+							} else {
+								if(numberOfPlayers-round-1 == 0){
+									System.out.println("\n -- Last round played!\n");
+								} else {
+									System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
+								}
 							}
-							*/
-
-							System.out.println("Actual fireworks == " + fireworks);
+							System.out.println("Actual fireworks:" + fireworks);
 							break;
 					}
 
-					if (deck.size() == 1) {
-                        System.out.println("Last round!");
-                    }
+					if(lastRound && round > -1 && round < numberOfPlayers){
+						round++;
+					}
 
-                    if(deck.size() == 0 && round < numberOfPlayers){
-                        round ++;
-                    }
+					if (deck.size() == 0) {
+						if(!lastRound){
+							System.out.println("\nLast Round!!\n");
+						}
+						lastRound = true;
+						if(round == -1){
+							round = 0;
+						}
+					}
 				}
 			}
 
