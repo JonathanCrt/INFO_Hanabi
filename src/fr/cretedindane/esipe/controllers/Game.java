@@ -125,7 +125,6 @@ public class Game {
 			return true;
 		}
 
-		System.out.println("END nb players == "+numberOfPlayers);
 		if (round == numberOfPlayers) {
 			System.out.print("Game over - deck is empty! Players lose!");
 			return true;
@@ -143,7 +142,6 @@ public class Game {
 		fireworks = new HashMap<>();
 		redtokens = new LinkedList<>();
 		bluetokens = new LinkedList<>();
-		System.out.println(deck);
 
 		for (Colors c : Colors.values()) {
 			fireworks.put(c, new Stack<>());
@@ -160,6 +158,12 @@ public class Game {
 
 		System.out.println("How many players are you? ");
 		Scanner s = new Scanner(System.in);
+
+		while(!(s.hasNextInt())){
+			System.out.println("Are you 2, 3, 4 or 5 players?");
+			s = new Scanner(System.in);
+		}
+
 		while (handCards == 0) {
 			numberOfPlayers = s.nextInt();
 			s.nextLine();
@@ -172,31 +176,31 @@ public class Game {
 				System.out.println("The game needs 2, 3, 4 or 5 players.");
 				handCards = 0;
 			}
-
 		}
+
 
 		setPlayers(numberOfPlayers, handCards);
 		for(Player p: players){
 			System.out.println(p);
 		}
 
-			/** Let's make the players play! */
-            for(Player actualPlayer: players){
-				/** While the game's still on... */
-				while(!(endGame())) {
-                /** Action type: 1-Tip, 2-Play or 3-Drop */
-                int action = -1;
+		/** Let's make the players play! */
+		for(Player actualPlayer: players){
+			/** While the game's still on... */
+			while(!(endGame())) {
+			/** Action type: 1-Tip, 2-Play or 3-Drop */
+				int action = -1;
 
 				/**(1) is disabled in phase 1*/
-                while (action == -1) {
-                    System.out.println("\n-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
-                    Scanner sc = new Scanner(System.in);
-                    action = sc.nextInt();
-                    if (action > 3 || action < 1){
-                        System.out.println("Unfit option.");
-                        action = -1;
-                    }
-                }
+				while (action == -1) {
+					System.out.println("\n-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
+					Scanner sc = new Scanner(System.in);
+					action = sc.nextInt();
+					if (action > 3 || action < 1){
+						System.out.println("Unfit option.");
+						action = -1;
+					}
+				}
 				if (action ==1) {
 					System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
 				} else {
@@ -209,17 +213,17 @@ public class Game {
 						case 2:
 							/** Play a card */
 
-                            // check if the selected index of card exists
-                            int index = -1;
-                            while(index == -1) {
-                                System.out.println("Which card would you like to play?");
-                                Scanner scan = new Scanner(System.in);
-                                index = scan.nextInt();
-                                if(index > handCards-1 || index < 0) {
-                                    System.out.println("\nWARNING! You have "+ handCards + " cards in your hand.\n");
-                                    index = -1;
-                                }
-                            }
+							// check if the selected index of card exists
+							int index = -1;
+							while(index == -1) {
+								System.out.println("Which card would you like to play?");
+								Scanner scan = new Scanner(System.in);
+								index = scan.nextInt();
+								if(index > handCards-1 || index < 0) {
+									System.out.println("\nWARNING! You have "+ handCards + " cards in your hand.\n");
+									index = -1;
+								}
+							}
 
 							Card playedCard = removeCardFromHand(actualPlayer, index);
 							System.out.println(actualPlayer.getName() + " played a " + playedCard);
@@ -243,10 +247,10 @@ public class Game {
 
 							/** Give a new card to the player */
 							if(deck.size() != 0) {
-                                Card newCard = deck.getTopCard();
-                                actualPlayer.getHand().add(newCard);
-                                System.out.println(actualPlayer);
-                            } else {
+								Card newCard = deck.getTopCard();
+								actualPlayer.getHand().add(newCard);
+								System.out.println(actualPlayer);
+							} else {
 								if(numberOfPlayers-round-1 == 0){
 									System.out.println("\n -- Last round played!\n");
 								} else {
@@ -258,17 +262,17 @@ public class Game {
 						case 3:
 							/** Discard a card */
 
-                            // check if the selected index of card exists
+							// check if the selected index of card exists
 							int inde = -1;
-                            while(inde == -1) {
-                                System.out.println("Which card would you like to discard?");
-                                Scanner scan = new Scanner(System.in);
-                                inde = scan.nextInt();
-                                if(inde > handCards-1 || inde < 0) {
-                                    System.out.println("\nWARNING!! You have "+ handCards + " cards in your hand.\n");
-                                    inde = -1;
-                                }
-                            }
+							while(inde == -1) {
+								System.out.println("Which card would you like to discard?");
+								Scanner scan = new Scanner(System.in);
+								inde = scan.nextInt();
+								if(inde > handCards-1 || inde < 0) {
+									System.out.println("\nWARNING!! You have "+ handCards + " cards in your hand.\n");
+									inde = -1;
+								}
+							}
 
 							Card discardedCard = removeCardFromHand(actualPlayer, inde);
 							System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
