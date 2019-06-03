@@ -1,26 +1,60 @@
 package fr.cretedindane.esipe.controllers;
 
-import java.util.ArrayList;
+import fr.cretedindane.esipe.action.Action;
 
-public class Player {
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/** Stay abstract
+ *  Get rid of hand and create a new class to map every player with his hand
+ *  Add known cards as Vectors*/
+public abstract class Player {
+	private static final AtomicInteger count = new AtomicInteger(1);
+	private int playerId;
 	private String name;
-	private ArrayList<Card> hand;
+	private List<Integer> knownNumbers;
+	private List<Colors> knownColors;
 	
-	public Player(String name, ArrayList<Card> hand) {
+	public Player(String name) {
 		this.name = name;
-		this.hand = hand;
+		this.playerId = count.incrementAndGet();
+		this.knownColors = new Vector<>(Arrays.asList(null, null, null, null, null));
+		this.knownNumbers = new Vector<>(Arrays.asList(null, null, null, null, null));
 	}
 
 	public String getName(){
 		return this.name;
 	}
 
-	public int getHandSize(){
-		return this.hand.size();
+	public int getPlayerId(){
+		return this.playerId;
 	}
 
-	public ArrayList<Card> getHand() {
-		return this.hand;
+	public abstract Action takeAction(Map<Colors, Stack<Card>> fireworks,
+			List<Card> playerHand, int remainingTips, int remainingFuses);
+
+	public void receiveNumberTip(int number, List<Integer> indices) {
+		for (Integer i : indices) {
+			this.knownNumbers.remove(i.intValue());
+			this.knownNumbers.add(i, number);
+		}
+	}
+
+	public void receiveSuitTip(Colors suit, List<Integer> indices) {
+		for (Integer i : indices) {
+			this.knownColors.remove(i.intValue());
+			this.knownColors.add(i, suit);
+		}
+	}
+
+	public void cardHasBeenUsed(int indices) {
+		for(int i=indices; i < this.knownNumbers.size()-1; i++) {
+			this.knownNumbers.set(i, this.knownNumbers.get(i+1));
+			this.knownColors.set(i, this.knownColors.get(i+1));
+		}
+		this.knownNumbers.set(4, null);
+		this.knownColors.set(4, null);
 	}
 
 	@Override
@@ -29,23 +63,6 @@ public class Player {
 			return false;
 		}
 		Player p = (Player) obj;
-		return(this.getHand().equals(p.getHand())  && this.getName().equals(p.getName()));
+		return(this.getName().equals(p.getName()));
 	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.name);
-		sb.append(" has a hand of ");
-		sb.append(getHandSize());
-		sb.append(" cards: ");
-
-		for(int i=0; i<getHand().size(); i++){
-			sb.append(this.getHand().get(i)).append(" ");
-		}
-		sb.append(".\n");
-		return sb.toString();
-
-	}
-
 }

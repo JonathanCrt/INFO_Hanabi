@@ -1,43 +1,47 @@
 package fr.cretedindane.esipe.controllers;
 
+import fr.cretedindane.esipe.action.Action;
+import fr.cretedindane.esipe.action.ActionType;
+import fr.cretedindane.esipe.action.TipAction;
+import fr.cretedindane.esipe.action.TipType;
+
 import java.util.*;
 
+/** Change Action to 'Action' type and not int
+ *  Get rid of useless and repeated code.
+ */
+
 public class Game {
+    private static Map<Player, List<Card>> playerHands;
     private static Queue<Redtokens> redtokens;
     private static Queue<Bluetokens> bluetokens;
     private static LinkedList<Player> players;
     private static Map<Colors, Stack<Card>> fireworks;
     private static Deck deck;
     private static int numberOfPlayers;
-    private static int tips = 8;
     private static int handCards = 0;
+    private static int tips = 8;
     // count till last round
     private static boolean lastRound = false;
     private static int round = -1;
 
     /**
-     * create players with our hands
+     * create players, players hands and set fireworks
      * @param numberOfPlayers
      * @param handCards
      */
-    @SuppressWarnings({ "resource", "unlikely-arg-type" })
-    protected static void setPlayers(int numberOfPlayers, int handCards){
-        Scanner nameP = new Scanner(System.in);
-
-        /** Creating the players */
-        for (int i = 0; i < numberOfPlayers; i++) {
-            String name = null;
-            ArrayList<Card> hand = new ArrayList<Card>();
-
-            for (int j = 0; j < handCards; j++) {
-                hand.add(deck.getTopCard());
-                deck.getDeck().remove(j);
+    static void setGame(int numberOfPlayers, int handCards) {
+        for (Player p : players) {
+            playerHands.put(p, new ArrayList<>());
+        }
+        for (int i=0; i<5; i++) {
+            for (Player p : players) {
+                Card c = deck.getTopCard();
+                playerHands.get(p).add(c);
             }
-
-            System.out.println("What's the name or the " + (i+1) + "th player? ");
-            name = nameP.nextLine();
-
-            players.add(new Player(name, hand));
+        }
+        for (Colors s : Colors.values()) {
+            fireworks.put(s, new Stack<>());
         }
     }
 
@@ -48,7 +52,7 @@ public class Game {
      * @return
      */
     public static Card removeCardFromHand(Player player, int cardIndex) {
-        return player.getHand().remove(cardIndex);
+        return playerHands.get(player).remove(cardIndex);
     }
 
 
@@ -130,10 +134,56 @@ public class Game {
             return true;
         }
 
-
         return false;
     }
 
+    public static int selectedIndex(Integer type, Integer actualPlayerId){
+        int index = -1;
+        while(index == -1) {
+            if(type==null && actualPlayerId==null) {
+                System.out.println("Which card would you like to play?");
+                Scanner scan = new Scanner(System.in);
+                index = scan.nextInt();
+                if (index > handCards - 1 || index < 0) {
+                    System.out.println("\nWARNING! You have " + handCards + " cards in your hand.\n");
+                    index = -1;
+                }
+            } else {
+                System.out.println("Give a tip to?");
+                for(Player p: players){
+                    System.out.println("Player: " + p + "is number: " + (p.getPlayerId()));
+                }
+                Scanner scan = new Scanner(System.in);
+                index = scan.nextInt();
+                if (index > numberOfPlayers || index < 1 || actualPlayerId+1 == index) {
+                    System.out.println("\nWARNING! You have to choose a player who's not you.\n");
+                    index = -1;
+                }
+                index -= 1;
+            }
+        }
+        return index;
+    }
+
+    private List<Card> getOtherPlayerHands(Player player) {
+       return playerHands.get(player);
+    }
+
+    Action getAction(Player player){
+        int actionTry = 3;
+        Action action = null;
+        while(actionTry > 0) {
+            action = player.takeAction(fireworks, getOtherPlayerHands(player), bluetokens.size(), redtokens.size());
+            if(action.getActionType() == ActionType.TIP && bluetokens.isEmpty()) {
+                actionTry--;
+            } else {
+                return action;
+            }
+        }
+        System.out.println("Player " + player.getName() + " attempted 3 times to give a tip, when no tips where available.");
+        System.exit(1);
+        return action;
+    }
 
     public static void main(String[] args) {
         // init all
@@ -143,10 +193,6 @@ public class Game {
         redtokens = new LinkedList<>();
         bluetokens = new LinkedList<>();
 
-        for (Colors c : Colors.values()) {
-            fireworks.put(c, new Stack<>());
-        }
-
         for (int i=0; i<8; i++) {
             bluetokens.add(new Bluetokens());
         }
@@ -155,7 +201,7 @@ public class Game {
             redtokens.add(new Redtokens());
         }
 
-
+        /** Set game from number of players*/
         System.out.println("How many players are you? ");
         Scanner s = new Scanner(System.in);
 
@@ -178,13 +224,13 @@ public class Game {
             }
         }
 
-
-        setPlayers(numberOfPlayers, handCards);
+        setGame(numberOfPlayers, handCards);
         for(Player p: players){
             System.out.println(p);
         }
 
         /** Let's make the players play! */
+        //action type now not an integer
         for(Player actualPlayer: players){
             /** While the game's still on... */
             while(!(endGame())) {
@@ -207,25 +253,34 @@ public class Game {
                     switch (action) {
                         case 1:
                             /** Give a tip */
-                            // disabled for phase 1
+                            /*
+                            redtokens.poll();
+                            // Give player some information
+                            TipAction tip = (TipAction) action;
+                            int k = selectedIndex(0, actualPlayer.getId());
+                            Player receivingPlayer = players.get(k);
+                            if (tip.getType() == TipType.NUMBER) {
+                                receivingPlayer.receiveNumberTip(tip.getTipNumber(), tip.getImpactedCardIndices());
+                            } else {
+                                receivingPlayer.receiveSuitTip(tip.getTipSuit(), tip.getImpactedCardIndices());
+                            }
+
+                            System.out.println(actualPlayer.getName() + " gave a tip to Player '" + receivingPlayer.getName() + "' : Cards at " + tip.getImpactedCards() + " are "
+                                    + (tip.getType() == TipType.NUMBER ? tip.getTipNumber() : tip.getTipColor()));
+                            if(redtokens.isEmpty()) {
+                                System.out.println("Carefull now! No Tips remaining!");
+                            }
+                            */
+
                             break;
 
                         case 2:
                             /** Play a card */
 
                             // check if the selected index of card exists
-                            int index = -1;
-                            while(index == -1) {
-                                System.out.println("Which card would you like to play?");
-                                Scanner scan = new Scanner(System.in);
-                                index = scan.nextInt();
-                                if(index > handCards-1 || index < 0) {
-                                    System.out.println("\nWARNING! You have "+ handCards + " cards in your hand.\n");
-                                    index = -1;
-                                }
-                            }
 
-                            Card playedCard = removeCardFromHand(actualPlayer, index);
+                            int i = selectedIndex(null, null);
+                            Card playedCard = removeCardFromHand(actualPlayer, i);
                             System.out.println(actualPlayer.getName() + " played a " + playedCard);
 
                             if (canPlayCard(playedCard)) {
@@ -248,7 +303,7 @@ public class Game {
                             /** Give a new card to the player */
                             if(deck.size() != 0) {
                                 Card newCard = deck.getTopCard();
-                                actualPlayer.getHand().add(newCard);
+                                playerHands.get(actualPlayer).add(newCard);
                                 System.out.println(actualPlayer);
                             } else {
                                 if(numberOfPlayers-round-1 == 0){
@@ -263,25 +318,15 @@ public class Game {
                             /** Discard a card */
 
                             // check if the selected index of card exists
-                            int inde = -1;
-                            while(inde == -1) {
-                                System.out.println("Which card would you like to discard?");
-                                Scanner scan = new Scanner(System.in);
-                                inde = scan.nextInt();
-                                if(inde > handCards-1 || inde < 0) {
-                                    System.out.println("\nWARNING!! You have "+ handCards + " cards in your hand.\n");
-                                    inde = -1;
-                                }
-                            }
-
-                            Card discardedCard = removeCardFromHand(actualPlayer, inde);
+                            int j = selectedIndex(null, null);
+                            Card discardedCard = removeCardFromHand(actualPlayer, j);
                             System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
                             /** Give a new card to the player */
                             if(deck.size() != 0){
                                 Card newOtherCard = deck.getTopCard();
-                                actualPlayer.getHand().add(newOtherCard);
-                                System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + actualPlayer.getHand());
+                                playerHands.get(actualPlayer).add(newOtherCard);
+                                System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + playerHands.get(actualPlayer));
                             } else {
                                 if(numberOfPlayers-round-1 == 0){
                                     System.out.println("\n -- Last round played!\n");
