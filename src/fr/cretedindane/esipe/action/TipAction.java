@@ -37,6 +37,10 @@ public class TipAction implements Action {
         this.tipNumber = null;
     }
 
+    public Player getTipedPlayer() {
+        return tipedPlayer;
+    }
+
     public TipType getType(){ return this.type; }
 
     @Override

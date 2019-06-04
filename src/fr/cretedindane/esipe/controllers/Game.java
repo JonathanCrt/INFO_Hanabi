@@ -7,9 +7,9 @@ import fr.cretedindane.esipe.action.TipType;
 
 import java.util.*;
 
-/** Change Action to 'Action' type and not int
- *  Get rid of useless and repeated code.
- */
+/** TODO:
+ * getType() problem in line 200 and 202
+ * check TipAction constructor*/
 
 public class Game {
     private static Map<Player, List<Card>> playerHands;
@@ -20,7 +20,6 @@ public class Game {
     private static Deck deck;
     private static int numberOfPlayers;
     private static int handCards = 0;
-    private static int tips = 8;
     // count till last round
     private static boolean lastRound = false;
     private static int round = -1;
@@ -185,6 +184,111 @@ public class Game {
         return action;
     }
 
+    /** Define type of action took by a player */
+    Action (Player actualPlayer){
+        Action action = getAction(actualPlayer);
+        switch(action.getActionType()){
+            case TIP:
+                /******* Give a tip ******/
+                //take off a blue token
+                bluetokens.poll();
+
+                // Give player some information
+                TipAction tip = (TipAction) action;
+                Player receivingPlayer = tip.getTipedPlayer();
+                if (tip.getType() == TipType.NUMBER) {
+                    receivingPlayer.receiveNumberTip(tip.getType(), tip.getImpactedCards());
+                } else {
+                    receivingPlayer.receiveSuitTip(tip.getType(), tip.getImpactedCards());
+                }
+
+                System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at card " + tip.getImpactedCards() + " are "
+                        + (tip.getType() == TipType.NUMBER ? tip.getType() : tip.getType()));
+                if(redtokens.isEmpty()) {
+                    System.out.println("Be careful! No blue token remaining!");
+                }
+
+                break;
+            case PLAY:
+                /******* Play a card ********/
+
+                /** played card */
+                Card playedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
+                System.out.println(actualPlayer.getName() + " played a " + playedCard);
+
+                /** play card */
+                if (canPlayCard(playedCard)) {
+                    // put the card on the table
+                    fireworks.get(playedCard.getCardColor()).add(playedCard);
+                    System.out.println(playedCard);
+
+                    /** Check if the firework has been completed */
+                    if (playedCard.getCardValue() == 5 && bluetokens.size() < 8) {
+                        System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
+                        if(bluetokens.size() < 8) bluetokens.add(new Bluetokens());
+                    }
+                } else {
+                    // if the player put the wrong card on the table
+                    redtokens.poll();
+                    System.out.println("Wrong card " + actualPlayer.getName() + "! (" + playedCard + " cannot be played)!");
+                    System.out.println("Red tokens left: " + redtokens.size());
+                }
+
+                /** Give a new card to the player */
+                if(deck.size() != 0) {
+                    Card newCard = deck.getTopCard();
+                    playerHands.get(actualPlayer).add(newCard);
+                    System.out.println(actualPlayer);
+                } else {
+                    if(numberOfPlayers-round-1 == 0){
+                        System.out.println("\n -- Last round played!\n");
+                    } else {
+                        System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
+                    }
+                }
+                System.out.println("\nActual fireworks: " + fireworks);
+
+                break;
+            case DROP:
+                /********* Discard a card *********/
+
+                /** discard the card */
+                Card discardedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
+                System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
+
+                /** give a new card to the player */
+                Card newCard = deck.getTopCard();
+                actualPlayer.cardHasBeenUsed(action.getImpactedCards().get(0));
+                playerHands.get(actualPlayer).add(newCard);
+                System.out.println(actualPlayer.getName() + " has a new card in his hand.\n");
+
+                /** new tip (blueTokken)*/
+                if(bluetokens.size() < 8){
+                    bluetokens.add(new Bluetokens());
+                }
+
+                break;
+        }
+
+        //check round
+        if(lastRound && round > -1 && round < numberOfPlayers){
+            round++;
+        }
+
+        if (deck.size() == 0) {
+            if(!lastRound){
+                System.out.println("\nLast Round!!\n");
+            }
+            lastRound = true;
+            if(round == -1){
+                round = 0;
+            }
+        }
+
+        return action;
+    }
+
+
     public static void main(String[] args) {
         // init all
         deck = new Deck();
@@ -231,130 +335,14 @@ public class Game {
 
         /** Let's make the players play! */
         //action type now not an integer
-        for(Player actualPlayer: players){
-            /** While the game's still on... */
-            while(!(endGame())) {
-                /** Action type: 1-Tip, 2-Play or 3-Drop */
-                int action = -1;
+        //
+        //
+        //
+        //
+        // TODO
 
-                /**(1) is disabled in phase 1*/
-                while (action == -1) {
-                    System.out.println("\n-->" + actualPlayer.getName() + "'s turn. You can tape: \n(1)-To give a tip (disabled in phase 1); \n(2)-To play a card; \n(3)-To drop a card. ");
-                    Scanner sc = new Scanner(System.in);
-                    action = sc.nextInt();
-                    if (action > 3 || action < 1){
-                        System.out.println("Unfit option.");
-                        action = -1;
-                    }
-                }
-                if (action ==1) {
-                    System.out.println("\nIn phase 1, the first option is disabled. Please enter an other choice.\n");
-                } else {
-                    switch (action) {
-                        case 1:
-                            /** Give a tip */
-                            /*
-                            redtokens.poll();
-                            // Give player some information
-                            TipAction tip = (TipAction) action;
-                            int k = selectedIndex(0, actualPlayer.getId());
-                            Player receivingPlayer = players.get(k);
-                            if (tip.getType() == TipType.NUMBER) {
-                                receivingPlayer.receiveNumberTip(tip.getTipNumber(), tip.getImpactedCardIndices());
-                            } else {
-                                receivingPlayer.receiveSuitTip(tip.getTipSuit(), tip.getImpactedCardIndices());
-                            }
 
-                            System.out.println(actualPlayer.getName() + " gave a tip to Player '" + receivingPlayer.getName() + "' : Cards at " + tip.getImpactedCards() + " are "
-                                    + (tip.getType() == TipType.NUMBER ? tip.getTipNumber() : tip.getTipColor()));
-                            if(redtokens.isEmpty()) {
-                                System.out.println("Carefull now! No Tips remaining!");
-                            }
-                            */
 
-                            break;
-
-                        case 2:
-                            /** Play a card */
-
-                            // check if the selected index of card exists
-
-                            int i = selectedIndex(null, null);
-                            Card playedCard = removeCardFromHand(actualPlayer, i);
-                            System.out.println(actualPlayer.getName() + " played a " + playedCard);
-
-                            if (canPlayCard(playedCard)) {
-                                // put the card on the table
-                                fireworks.get(playedCard.getCardColor()).add(playedCard);
-                                System.out.println(playedCard);
-
-                                /** Check if the firework has been completed */
-                                if (playedCard.getCardValue() == 5 && bluetokens.size() < tips) {
-                                    System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
-                                    if(bluetokens.size() < 8) bluetokens.add(new Bluetokens());
-                                }
-                            } else {
-                                // if the player put the wrong card on the table
-                                redtokens.poll();
-                                System.out.println("Wrong card " + actualPlayer.getName() + "! (" + playedCard + " cannot be played)!");
-                                System.out.println("Red tokens left: " + redtokens.size());
-                            }
-
-                            /** Give a new card to the player */
-                            if(deck.size() != 0) {
-                                Card newCard = deck.getTopCard();
-                                playerHands.get(actualPlayer).add(newCard);
-                                System.out.println(actualPlayer);
-                            } else {
-                                if(numberOfPlayers-round-1 == 0){
-                                    System.out.println("\n -- Last round played!\n");
-                                } else {
-                                    System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
-                                }                            }
-                            System.out.println("\nActual fireworks: " + fireworks);
-                            break;
-
-                        case 3:
-                            /** Discard a card */
-
-                            // check if the selected index of card exists
-                            int j = selectedIndex(null, null);
-                            Card discardedCard = removeCardFromHand(actualPlayer, j);
-                            System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
-
-                            /** Give a new card to the player */
-                            if(deck.size() != 0){
-                                Card newOtherCard = deck.getTopCard();
-                                playerHands.get(actualPlayer).add(newOtherCard);
-                                System.out.println("New card added to " + actualPlayer.getName() + ".\nNew hand: " + playerHands.get(actualPlayer));
-                            } else {
-                                if(numberOfPlayers-round-1 == 0){
-                                    System.out.println("\n -- Last round played!\n");
-                                } else {
-                                    System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
-                                }
-                            }
-                            System.out.println("Actual fireworks:" + fireworks);
-                            break;
-                    }
-
-                    if(lastRound && round > -1 && round < numberOfPlayers){
-                        round++;
-                    }
-
-                    if (deck.size() == 0) {
-                        if(!lastRound){
-                            System.out.println("\nLast Round!!\n");
-                        }
-                        lastRound = true;
-                        if(round == -1){
-                            round = 0;
-                        }
-                    }
-                }
-            }
-
-        }
     }
 
 }
