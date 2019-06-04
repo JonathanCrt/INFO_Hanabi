@@ -10,4 +10,12 @@ public class PlayerHand {
         this.player = player;
         this.cards = cards;
     }
+
+    public Player getPlayer(){
+        return this.player;
+    }
+
+    public List<Card> getCards(){
+        return this.cards;
+    }
 }

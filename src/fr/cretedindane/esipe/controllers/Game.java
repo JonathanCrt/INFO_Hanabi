@@ -7,22 +7,19 @@ import fr.cretedindane.esipe.action.TipType;
 
 import java.util.*;
 
-/** TODO:
- * getType() problem in line 200 and 202
- * check TipAction constructor*/
-
+/** TODO
+ * resolve typeAction problem*/
 public class Game {
+    private static int round = -1;
+    private static int numberOfPlayers;
+    private static int handCards = 0;
     private static Map<Player, List<Card>> playerHands;
-    private static Queue<Redtokens> redtokens;
     private static Queue<Bluetokens> bluetokens;
+    private static Queue<Redtokens> redtokens;
     private static LinkedList<Player> players;
     private static Map<Colors, Stack<Card>> fireworks;
     private static Deck deck;
-    private static int numberOfPlayers;
-    private static int handCards = 0;
-    // count till last round
     private static boolean lastRound = false;
-    private static int round = -1;
 
     /**
      * create players, players hands and set fireworks
@@ -30,10 +27,10 @@ public class Game {
      * @param handCards
      */
     static void setGame(int numberOfPlayers, int handCards) {
-        for (Player p : players) {
-            playerHands.put(p, new ArrayList<>());
+        for (int i=0; i<numberOfPlayers; i++) {
+            playerHands.put(new Player("Player"+(i+1)), new ArrayList<>());
         }
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<handCards; i++) {
             for (Player p : players) {
                 Card c = deck.getTopCard();
                 playerHands.get(p).add(c);
@@ -136,43 +133,15 @@ public class Game {
         return false;
     }
 
-    public static int selectedIndex(Integer type, Integer actualPlayerId){
-        int index = -1;
-        while(index == -1) {
-            if(type==null && actualPlayerId==null) {
-                System.out.println("Which card would you like to play?");
-                Scanner scan = new Scanner(System.in);
-                index = scan.nextInt();
-                if (index > handCards - 1 || index < 0) {
-                    System.out.println("\nWARNING! You have " + handCards + " cards in your hand.\n");
-                    index = -1;
-                }
-            } else {
-                System.out.println("Give a tip to?");
-                for(Player p: players){
-                    System.out.println("Player: " + p + "is number: " + (p.getPlayerId()));
-                }
-                Scanner scan = new Scanner(System.in);
-                index = scan.nextInt();
-                if (index > numberOfPlayers || index < 1 || actualPlayerId+1 == index) {
-                    System.out.println("\nWARNING! You have to choose a player who's not you.\n");
-                    index = -1;
-                }
-                index -= 1;
-            }
-        }
-        return index;
-    }
-
-    private List<Card> getOtherPlayerHands(Player player) {
+    private static List<Card> getOtherPlayerHands(Player player) {
        return playerHands.get(player);
     }
 
-    Action getAction(Player player){
+    private static Action getAction(Player player){
         int actionTry = 3;
         Action action = null;
         while(actionTry > 0) {
-            action = player.takeAction(fireworks, getOtherPlayerHands(player), bluetokens.size(), redtokens.size());
+            action = player.takeAction(action.getActionType(), fireworks, getOtherPlayerHands(player), bluetokens.size(), redtokens.size());
             if(action.getActionType() == ActionType.TIP && bluetokens.isEmpty()) {
                 actionTry--;
             } else {
@@ -185,33 +154,30 @@ public class Game {
     }
 
     /** Define type of action took by a player */
-    Action (Player actualPlayer){
+    private static void tookedAction(Player actualPlayer){
         Action action = getAction(actualPlayer);
         switch(action.getActionType()){
             case TIP:
-                /******* Give a tip ******/
-                //take off a blue token
+                /** take off a blue token */
                 bluetokens.poll();
+                if(bluetokens.isEmpty()) {
+                    System.out.println("Be careful! No blue token remaining!");
+                }
 
-                // Give player some information
+                /** Give player some information */
                 TipAction tip = (TipAction) action;
-                Player receivingPlayer = tip.getTipedPlayer();
+                Player receivingPlayer = tip.getTippedPlayer();
                 if (tip.getType() == TipType.NUMBER) {
-                    receivingPlayer.receiveNumberTip(tip.getType(), tip.getImpactedCards());
+                    receivingPlayer.receiveNumberTip(tip.getTipNumber(), tip.getImpactedCards());
                 } else {
-                    receivingPlayer.receiveSuitTip(tip.getType(), tip.getImpactedCards());
+                    receivingPlayer.receiveColorTip(tip.getTipColor(), tip.getImpactedCards());
                 }
 
                 System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at card " + tip.getImpactedCards() + " are "
                         + (tip.getType() == TipType.NUMBER ? tip.getType() : tip.getType()));
-                if(redtokens.isEmpty()) {
-                    System.out.println("Be careful! No blue token remaining!");
-                }
 
                 break;
             case PLAY:
-                /******* Play a card ********/
-
                 /** played card */
                 Card playedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
                 System.out.println(actualPlayer.getName() + " played a " + playedCard);
@@ -250,8 +216,6 @@ public class Game {
 
                 break;
             case DROP:
-                /********* Discard a card *********/
-
                 /** discard the card */
                 Card discardedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
                 System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
@@ -284,8 +248,6 @@ public class Game {
                 round = 0;
             }
         }
-
-        return action;
     }
 
 
@@ -328,21 +290,18 @@ public class Game {
             }
         }
 
+        System.out.println("i'm here1");
         setGame(numberOfPlayers, handCards);
+        System.out.println("i'm her3e");
         for(Player p: players){
             System.out.println(p);
         }
 
+        System.out.println("i'm here2");
         /** Let's make the players play! */
-        //action type now not an integer
-        //
-        //
-        //
-        //
-        // TODO
-
-
-
+        for(Player p: players) {
+            tookedAction(p);
+        }
     }
 
 }
