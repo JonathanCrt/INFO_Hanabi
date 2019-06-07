@@ -20,8 +20,8 @@ public class TipAction implements Action {
     private Colors tipColor;
 
     /** Giving a tip by number */
-    public TipAction(Player tipedPlayer, int tipNumber, List<Integer> tippedCard){
-        this.tippedPlayer = tipedPlayer;
+    public TipAction(Player tippedPlayer, int tipNumber, List<Integer> tippedCard){
+        this.tippedPlayer = tippedPlayer;
         this.type = TipType.NUMBER;
         this.tipNumber = tipNumber;
         this.tipColor = null;
@@ -29,8 +29,8 @@ public class TipAction implements Action {
     }
 
     /** Giving a tip by color */
-    public TipAction(Player tipedPlayer, Colors tipColor, List<Integer> tippedCard){
-        this.tippedPlayer = tipedPlayer;
+    public TipAction(Player tippedPlayer, Colors tipColor, List<Integer> tippedCard){
+        this.tippedPlayer = tippedPlayer;
         this.type = TipType.COLOR;
         this.tippedCard = tippedCard;
         this.tipColor = tipColor;
@@ -48,8 +48,6 @@ public class TipAction implements Action {
     public Colors getTipColor(){
         return this.tipColor;
     }
-
-
 
     public TipType getType(){ return this.type; }
 

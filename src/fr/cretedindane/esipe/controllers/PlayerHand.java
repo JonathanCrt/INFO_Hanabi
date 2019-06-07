@@ -18,4 +18,9 @@ public class PlayerHand {
     public List<Card> getCards(){
         return this.cards;
     }
+
+    @Override
+    public String toString(){
+        return "Player "+ this.player.getName() + ", has a hand of " + this.cards + ".\n";
+    }
 }
