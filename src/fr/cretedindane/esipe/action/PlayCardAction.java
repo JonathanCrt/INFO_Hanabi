@@ -5,6 +5,11 @@ import java.util.List;
 public class PlayCardAction implements Action {
     private int cardIndex;
 
+    public PlayCardAction(int cardIndex){
+        super();
+        this.cardIndex = cardIndex;
+    }
+
     @Override
     public ActionType getActionType(){
         return ActionType.PLAY;

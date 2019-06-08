@@ -141,36 +141,27 @@ public class Game {
     /** PROBLEM OF CHOICE : ALWAYS RETURN AN ACTION TYPE == TIP */
     private static List<PlayerHand> getOtherPlayerHand(ActionType actionType, Player actualPlayer) {
         int found = -1;
-        int idPlayer;
+        int index;
         List<PlayerHand> otherHand = new ArrayList<PlayerHand>();
 
         while(found == -1) {
-            if(actionType == ActionType.TIP) {
-                System.out.println("Which player would you like to give a tip to?");
-            } else if(actionType == ActionType.PLAY){
-                System.out.println("Which card would you like to play?");
-            } else if(actionType == ActionType.DROP){
-                System.out.println("Which card would you like to discard?");
-            } else {
-                System.out.println("Which card would you like to discard?");
-            }
-
+            System.out.print("Select your index: ");
             Scanner scan = new Scanner(System.in);
-            idPlayer = scan.nextInt();
-            if(idPlayer > 0 && idPlayer <= players.size()){
+            index = scan.nextInt();
+
+            if(index > 0 && index <= players.size() && actionType == ActionType.TIP) {
                 for (Player p : players) {
-                    if (p.getPlayerId() == idPlayer && p.getPlayerId() != actualPlayer.getPlayerId()) {
+                    if (p.getPlayerId() == index && p.getPlayerId() != actualPlayer.getPlayerId()) {
                         otherHand.add(new PlayerHand(p, playerHands.get(p)));
                         found = 0;
                     }
                 }
-            } else {
-                System.out.println("You're only " + players.size() + " players. Please select a valid ID from:");
-                for (Player player : players) {
-                    if (player.getPlayerId() != actualPlayer.getPlayerId()) {
-                        System.out.println("Player " + player.getPlayerId() + " is player " + player.getName() + ".");
-                    }
-                }
+            } else if(actionType == ActionType.DROP || actionType == ActionType.PLAY){
+                otherHand.add(new PlayerHand(actualPlayer, playerHands.get(actualPlayer)));
+                found = 0;
+            } else  {
+                System.out.println("You're only " + players.size() + " players with a hand of "+ handCards + " cards. Please select a valid index.");
+                displayGameStatus();
                 found = -1;
             }
         }
@@ -189,7 +180,7 @@ public class Game {
                     index = -1;
                 }
             } else {
-                System.out.println("Which card would you like to discard?");
+                System.out.print("Select index: ");
                 Scanner scan = new Scanner(System.in);
                 index = scan.nextInt();
                 if (index > handCards - 1 || index < 0) {
@@ -203,9 +194,11 @@ public class Game {
 
     private static Action takeAction(ActionType actionType, List<PlayerHand> playerHand) {
         if (actionType == ActionType.DROP) {
-            return new DropCardAction();
+            int index = selectedIndex(0);
+            return new DropCardAction(index);
         } else if (actionType == ActionType.PLAY) {
-            return new PlayCardAction();
+            int index = selectedIndex(0);
+            return new PlayCardAction(index);
         } else {
             Player p = playerHand.get(0).getPlayer();
             List<Card> hand = playerHand.get(0).getCards();
