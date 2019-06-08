@@ -53,7 +53,7 @@ public class Game {
      * @return
      */
     private static Card removeCardFromHand(Player player, int cardIndex) {
-        return playerHands.get(player).remove(cardIndex);
+        return playerHands.get(player).remove(cardIndex-1);
     }
 
 
@@ -138,16 +138,21 @@ public class Game {
         return false;
     }
 
-    /** PROBLEM OF CHOICE : ALWAYS RETURN AN ACTION TYPE == TIP */
     private static List<PlayerHand> getOtherPlayerHand(ActionType actionType, Player actualPlayer) {
         int found = -1;
-        int index;
+        int index = 1;
         List<PlayerHand> otherHand = new ArrayList<PlayerHand>();
 
         while(found == -1) {
-            System.out.print("Select your index: ");
-            Scanner scan = new Scanner(System.in);
-            index = scan.nextInt();
+            if(actionType == ActionType.TIP) {
+                System.out.print("Which player would you like to give a tip? ");
+                Scanner scan = new Scanner(System.in);
+                index = scan.nextInt();
+            } else if(actionType == ActionType.DROP) {
+                index = 3;
+            }else{
+                index = 2;
+            }
 
             if(index > 0 && index <= players.size() && actionType == ActionType.TIP) {
                 for (Player p : players) {
@@ -183,7 +188,7 @@ public class Game {
                 System.out.print("Select index: ");
                 Scanner scan = new Scanner(System.in);
                 index = scan.nextInt();
-                if (index > handCards - 1 || index < 0) {
+                if (index > handCards  || index < 0) {
                     System.out.println("\nOut of rang index! You have " + handCards + " cards in your hand.\n");
                     index = -1;
                 }
@@ -287,7 +292,7 @@ public class Game {
                 }
 
                 System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at indexed cards " + tip.getImpactedCards() + " of type "
-                        + (tip.getType() == TipType.NUMBER ? tip.getType() : tip.getType()) + ".");
+                        + (tip.getType() == TipType.NUMBER ? (" as number " + tip.getTipNumber()) : (" as color " + tip.getTipColor()))  + ".");
 
                 break;
             case PLAY:
