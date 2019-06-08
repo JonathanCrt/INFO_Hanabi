@@ -53,7 +53,7 @@ public class Game {
      * @return
      */
     private static Card removeCardFromHand(Player player, int cardIndex) {
-        return playerHands.get(player).remove(cardIndex-1);
+        return playerHands.get(player).remove(cardIndex);
     }
 
 
@@ -187,7 +187,7 @@ public class Game {
             } else {
                 System.out.print("Select index: ");
                 Scanner scan = new Scanner(System.in);
-                index = scan.nextInt();
+                index = scan.nextInt()-1;
                 if (index > handCards  || index < 0) {
                     System.out.println("\nOut of rang index! You have " + handCards + " cards in your hand.\n");
                     index = -1;
@@ -291,7 +291,7 @@ public class Game {
                     receivingPlayer.receiveColorTip(tip.getTipColor(), tip.getImpactedCards());
                 }
 
-                System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at indexed cards " + tip.getImpactedCards() + " of type "
+                System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at indexed cards " + tip.displayImpactedCard()
                         + (tip.getType() == TipType.NUMBER ? (" as number " + tip.getTipNumber()) : (" as color " + tip.getTipColor()))  + ".");
 
                 break;
@@ -339,10 +339,12 @@ public class Game {
                 System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
 
                 /** give a new card to the player */
-                Card newCard = deck.getTopCard();
-                actualPlayer.cardHasBeenUsed(action.getImpactedCards().get(0));
-                playerHands.get(actualPlayer).add(newCard);
-                System.out.println(actualPlayer.getName() + " has a new card in his hand.\n");
+                if(deck.size() > 0) {
+                    Card newCard = deck.getTopCard();
+                    actualPlayer.cardHasBeenUsed(action.getImpactedCards().get(0));
+                    playerHands.get(actualPlayer).add(newCard);
+                    System.out.println(actualPlayer.getName() + " has a new card in his hand.\n");
+                }
 
                 /** new tip (blue token)*/
                 if(bluetokens.size() < 8){
@@ -360,11 +362,12 @@ public class Game {
         if (deck.size() == 0) {
             if(!lastRound){
                 System.out.println("\nLast Round!!\n");
+                lastRound = true;
             }
-            lastRound = true;
-            if(round == -1){
-                round = 0;
-            }
+        }
+
+        if(lastRound && round == -1){
+            round = 0;
         }
     }
 
@@ -378,13 +381,19 @@ public class Game {
             sb.append(p).append(" ->");
             sb.append(playerHands.get(p)).append(".\n");
         }
-        sb.append("---------------------------------------------------------\n");
+        sb.append("-----------------------------------------------------------------------------------------------\n");
         sb.append("Deck size: ");
         sb.append(deck.size());
-        sb.append("\n---------------------------------------------------------\n");
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         sb.append("Fireworks status: ");
         sb.append(fireworks);
-        sb.append("\n---------------------------------------------------------\n");
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append("Blue tokens left (Tips): ");
+        sb.append(bluetokens.size());
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append("Red tokens left (Hearts): ");
+        sb.append(redtokens.size());
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         
         String status = sb.toString();
         System.out.println(status);
@@ -435,8 +444,8 @@ public class Game {
         setGame(numberOfPlayers, handCards);
 
         /** Let's make the players play! */
-        while(!endGame()) {
-            for (Player p : players) {
+        for (Player p : players) {
+            while(!endGame()) {
                 takenAction(p);
             }
         }

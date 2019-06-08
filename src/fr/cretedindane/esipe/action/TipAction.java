@@ -49,6 +49,19 @@ public class TipAction implements Action {
         return this.tipColor;
     }
 
+    public String displayImpactedCard(){
+        StringBuilder sb = new StringBuilder();
+        if(tippedCard != null){
+            sb.append("[");
+            for(int i=0; i<tippedCard.size()-1; i++){
+                sb.append(tippedCard.get(i)+1).append(" ");
+            }
+            sb.append(tippedCard.get(tippedCard.size()-1)+1);
+            sb.append("]");
+        }
+        return sb.toString();
+    }
+
     public TipType getType(){ return this.type; }
 
     @Override
