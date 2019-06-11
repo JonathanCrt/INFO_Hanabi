@@ -1,6 +1,10 @@
 package fr.cretedindane.esipe.controllers;
 
 import fr.cretedindane.esipe.action.*;
+import fr.cretedindane.esipe.bot.AlwaysDrop;
+import fr.cretedindane.esipe.bot.AlwaysPlay;
+import fr.cretedindane.esipe.bot.Bot;
+import fr.cretedindane.esipe.bot.RandomTip;
 
 import java.util.*;
 
@@ -400,7 +404,7 @@ public class Game {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         // init all
         deck = new Deck();
         players = new LinkedList<Player>();
@@ -449,6 +453,41 @@ public class Game {
                 takenAction(p);
             }
         }
+
+        /** Test Bots
+        List<Bot> bots = new LinkedList<>();
+        Map<Bot, List<Card>> botHands = new HashMap<>();
+
+        Bot bot1 = new AlwaysDrop("Discarded");
+        Bot bot2 = new AlwaysPlay("Player");
+        Bot bot3 = new RandomTip("Tipper");
+
+        bots.add(bot1);
+        bots.add(bot2);
+        bots.add(bot3);
+
+        for (Colors c : Colors.values()){
+            fireworks.put(c, new Stack<>());
+        }
+
+        for(Bot b: bots) {
+            botHands.put(b, new ArrayList<>());
+        }
+
+         handCards = 5;
+        for (int j=0; j<handCards; j++) {
+            for (Bot b : bots) {
+                Card c = deck.getTopCard();
+                botHands.get(b).add(c);
+            }
+        }
+
+        for (Bot b : bots) {
+            while (!endGame()) {
+                takenAction(b);
+            }
+        }
+         */
     }
 
 }

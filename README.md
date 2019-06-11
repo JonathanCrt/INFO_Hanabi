@@ -15,7 +15,7 @@ Red tokens and blues ones are used too.
 The game ends when: 1. All the red tokens are in the field,
                     2. The Deck is empty.
                     3. All the fireworks have been finished.
-> A graphic version that can adapt a game of 2-3 and 4-5 players with all the Hanabi normal game rules.
+> A full version that can adapt a game of 2-3 and 4-5 players with all the Hanabi normal game rules.
 
 
 

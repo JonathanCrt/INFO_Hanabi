@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /** Stay abstract
  *  Get rid of hand and create a new class to map every player with his hand
  *  Add known cards as Vectors*/
-public abstract class Player {
+public class Player {
 	private static final AtomicInteger count = new AtomicInteger(0);
 	private int playerId;
 	private String name;
@@ -58,10 +58,4 @@ public abstract class Player {
 	public String toString(){
 		return "Player id: " + this.playerId + ", named: " + this.name + ".";
 	}
-
-	public abstract Action takeAction(
-			Map<Colors, Stack<Card>> fireworks,
-			List<PlayerHand> playerHands,
-			int remainingTips,
-			int remainingFuses);
 }
