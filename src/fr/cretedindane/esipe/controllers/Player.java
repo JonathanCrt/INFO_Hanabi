@@ -58,4 +58,6 @@ public class Player {
 	public String toString(){
 		return "Player id: " + this.playerId + ", named: " + this.name + ".";
 	}
+
+
 }

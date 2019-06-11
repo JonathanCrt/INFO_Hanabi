@@ -149,7 +149,7 @@ public class Game {
 
         while(found == -1) {
             if(actionType == ActionType.TIP) {
-                System.out.print("Which player would you like to give a tip? ");
+                System.out.print("Which player would you like to give a tip (give id)? ");
                 Scanner scan = new Scanner(System.in);
                 index = scan.nextInt();
             } else if(actionType == ActionType.DROP) {
@@ -448,11 +448,13 @@ public class Game {
         setGame(numberOfPlayers, handCards);
 
         /** Let's make the players play! */
-        for (Player p : players) {
-            while(!endGame()) {
+        for(Player p : players) {
+            while (!endGame()) {
+                System.out.println(p);
                 takenAction(p);
             }
         }
+
 
         /** Test Bots
         List<Bot> bots = new LinkedList<>();
