@@ -19,6 +19,7 @@ public class Game {
     private static Map<Colors, Stack<Card>> fireworks;
     private static Deck deck;
     private static boolean lastRound = false;
+    private static int totalRounds = 0;
 
     /**
      * create players, players hands and set fireworks
@@ -386,6 +387,9 @@ public class Game {
             sb.append(playerHands.get(p)).append(".\n");
         }
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append("Round number: ");
+        sb.append(totalRounds);
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         sb.append("Deck size: ");
         sb.append(deck.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
@@ -449,8 +453,8 @@ public class Game {
 
         /** Let's make the players play! */
         for(Player p : players) {
-            while (!endGame()) {
-                System.out.println(p);
+             if(!(endGame())){
+                totalRounds ++;
                 takenAction(p);
             }
         }

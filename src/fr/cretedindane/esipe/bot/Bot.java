@@ -6,10 +6,13 @@ import fr.cretedindane.esipe.controllers.Colors;
 import fr.cretedindane.esipe.controllers.Player;
 import fr.cretedindane.esipe.controllers.PlayerHand;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 public abstract class Bot extends Player {
-    public Bot(String name) {
+
+    public Bot(String name){
         super(name);
     }
 
@@ -19,4 +22,3 @@ public abstract class Bot extends Player {
             int remainingTips,
             int remainingFuses);
 }
-

@@ -12,25 +12,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomTip extends Bot {
+
     public RandomTip(String name){
         super(name);
     }
 
     @Override
-    public Action takeAction(Map<Colors, Stack<Card>> fireworks, List<PlayerHand> playerHands, int remainingTips, int remainingFuses){
+    public Action takeAction(Map<Colors, Stack<Card>> fireworks,
+                             List<PlayerHand> playerHands,
+                             int remainingTips,
+                             int remainingFuses){
         Player p = playerHands.get(0).getPlayer();
         List<Card> hand = playerHands.get(0).getCards();
-        int randomIndex = new Random().nextInt(hand.size());
+        int randomIndex = ThreadLocalRandom.current().nextInt(0, hand.size());
         Card card = hand.get(randomIndex);
 
         List<Integer> indices = new ArrayList<>();
-        int randType = new Random().nextInt(1);
+        TipType tipType = ThreadLocalRandom.current().nextInt() % 2 == 0 ? TipType.NUMBER : TipType.COLOR;
 
-        /** (randType==0) ? Type Number : Type Color */
-        if (randType == 0) {
+        if (tipType == TipType.NUMBER) {
             // find all indices matching card number
             for (int i=0; i<hand.size(); i++) {
                 Card c = hand.get(i);
