@@ -14,13 +14,13 @@ public class Deck {
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
-		/*	deck.add(new Card(2, c));
+			deck.add(new Card(2, c));
 			deck.add(new Card(2, c));
 			deck.add(new Card(3, c));
 			deck.add(new Card(3, c));
 			deck.add(new Card(4, c));
 			deck.add(new Card(4, c));
-			deck.add(new Card(5, c));*/
+			deck.add(new Card(5, c));
 		}
 		
 		/** Shuffle method from java.util.Collection,
