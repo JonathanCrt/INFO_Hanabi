@@ -452,10 +452,12 @@ public class Game {
         setGame(numberOfPlayers, handCards);
 
         /** Let's make the players play! */
-        for(Player p : players) {
-             if(!(endGame())){
-                totalRounds ++;
-                takenAction(p);
+        while(!(endGame())) {
+            for (Player p : players) {
+                if (!(endGame())) {
+                    totalRounds++;
+                    takenAction(p);
+                }
             }
         }
 
