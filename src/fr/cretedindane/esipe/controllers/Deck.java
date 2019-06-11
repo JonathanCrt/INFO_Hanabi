@@ -14,7 +14,6 @@ public class Deck {
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
 			deck.add(new Card(1, c));
-			/*
 			deck.add(new Card(2, c));
 			deck.add(new Card(2, c));
 			deck.add(new Card(3, c));
@@ -22,7 +21,6 @@ public class Deck {
 			deck.add(new Card(4, c));
 			deck.add(new Card(4, c));
 			deck.add(new Card(5, c));
-			*/
 		}
 		
 		/** Shuffle method from java.util.Collection,
@@ -39,10 +37,6 @@ public class Deck {
 	/** Returns the top card of the deck. */
 	public Card getTopCard() {
 		return deck.poll();
-	}
-
-	public Queue<Card> getDeck() {
-		return deck;
 	}
 
 	@Override
