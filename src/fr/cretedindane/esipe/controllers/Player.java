@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *  Add known cards as Vectors*/
 public class Player {
 	private static final AtomicInteger count = new AtomicInteger(0);
-	private int playerId;
-	private String name;
+	private final int playerId;
+	private final String name;
 	private List<Integer> knownNumbers;
 	private List<Colors> knownColors;
 

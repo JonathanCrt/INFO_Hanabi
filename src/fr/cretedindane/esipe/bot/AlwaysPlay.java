@@ -1,7 +1,7 @@
 package fr.cretedindane.esipe.bot;
 
 import fr.cretedindane.esipe.action.Action;
-import fr.cretedindane.esipe.action.DropCardAction;
+import fr.cretedindane.esipe.action.PlayCardAction;
 import fr.cretedindane.esipe.controllers.Card;
 import fr.cretedindane.esipe.controllers.Colors;
 import fr.cretedindane.esipe.controllers.PlayerHand;
@@ -18,7 +18,7 @@ public class AlwaysPlay extends Bot{
 
     @Override
     public Action takeAction( Map<Colors, Stack<Card>> fireworks, List<PlayerHand> playerHands, int remainingTips, int remainingFuses){
-        return new DropCardAction(0);
+        return new PlayCardAction(0);
 
     }
 }

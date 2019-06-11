@@ -2,8 +2,8 @@ package fr.cretedindane.esipe.controllers;
 
 
 public class Card {
-	private int value;
-	private Colors color;
+	private final  int value;
+	private final Colors color;
 	
 	/** Constructor: Init card with a color and a value */
 	public Card(int value, Colors c) {

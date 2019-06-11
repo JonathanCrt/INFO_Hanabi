@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Collections;
 
 public class Deck {
-	private Queue<Card> deck;
+	private final Queue<Card> deck;
 
 	/** Constructor: Build a deck with 50 cards */
 	public Deck(){
