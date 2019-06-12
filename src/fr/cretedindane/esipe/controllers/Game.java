@@ -22,7 +22,32 @@ public class Game {
     private static int totalRounds = 0;
     private static String result = "Last action: ";
 
-    /**
+    public static int sizeBlueTokens() {
+		return bluetokens.size();
+	}
+
+	public static int getRound() {
+		return round;
+	}
+
+	public static int getNumberOfPlayers() {
+		return numberOfPlayers;
+	}
+
+
+	public static int getTotalRounds() {
+		return totalRounds;
+	}
+
+	public static boolean isLastRound() {
+		return lastRound;
+	}
+
+	public static void setLastRound(boolean lastRound) {
+		Game.lastRound = lastRound;
+	}
+
+	/**
      * create players, players hands and set fireworks
      * @param numberOfPlayers
      * @param handCards
@@ -52,7 +77,15 @@ public class Game {
         }
     }
 
-    /**
+    public static Queue<Bluetokens> getBluetokens() {
+		return bluetokens;
+	}
+
+	public static void setBluetokens(Queue<Bluetokens> bluetokens) {
+		Game.bluetokens = bluetokens;
+	}
+
+	/**
      * returns selected card by player
      * @param player
      * @param cardIndex
@@ -439,7 +472,7 @@ public class Game {
         for (int i=0; i<3; i++) {
             redtokens.add(new Redtokens());
         }
-
+        
         /** Set game from number of players*/
         System.out.println("How many players are you? ");
         Scanner s = new Scanner(System.in);
