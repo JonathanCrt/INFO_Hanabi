@@ -50,6 +50,14 @@ public class Game {
         for (Colors s : Colors.values()) {
             fireworks.put(s, new Stack<>());
         }
+
+        for (int i=0; i<8; i++) {
+            bluetokens.add(new Bluetokens());
+        }
+
+        for (int i=0; i<3; i++) {
+            redtokens.add(new Redtokens());
+        }
     }
 
     /**
@@ -272,7 +280,6 @@ public class Game {
     /** Define type of action took by a player */
     private static void takenAction(Player actualPlayer){
         displayGameStatus(actualPlayer);
-        System.out.println(actualPlayer.getName() + " turn:");
 
         /** Type action */
         Action action = getAction(actualPlayer);
@@ -400,22 +407,19 @@ public class Game {
             }
         }
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append("Actual player: ").append(player.getName());
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         sb.append(result);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Round number: ");
-        sb.append(totalRounds);
+        sb.append("Round number: ").append(totalRounds);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Deck size: ");
-        sb.append(deck.size());
+        sb.append("Deck size: ").append(deck.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Fireworks status: ");
-        sb.append(fireworks);
+        sb.append("Fireworks status: ").append(fireworks);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Blue tokens left (Tips): ");
-        sb.append(bluetokens.size());
+        sb.append("Blue tokens left (Tips): ").append(bluetokens.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Red tokens left (Hearts): ");
-        sb.append(redtokens.size());
+        sb.append("Red tokens left (Hearts): ").append(redtokens.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n\n");
         
         String status = sb.toString();
@@ -426,19 +430,11 @@ public class Game {
     public static void main(String[] args){
         // init all
         deck = new Deck();
-        players = new LinkedList<Player>();
+        players = new LinkedList<>();
         fireworks = new HashMap<>();
         redtokens = new LinkedList<>();
         bluetokens = new LinkedList<>();
         playerHands = new HashMap<>();
-
-        for (int i=0; i<8; i++) {
-            bluetokens.add(new Bluetokens());
-        }
-
-        for (int i=0; i<3; i++) {
-            redtokens.add(new Redtokens());
-        }
 
         /** Set game from number of players*/
         System.out.println("How many players are you? ");

@@ -28,28 +28,28 @@ public class RandomTip extends Bot {
         int randomIndex = ThreadLocalRandom.current().nextInt(0, hand.size());
         Card card = hand.get(randomIndex);
 
-        List<Integer> indices = new ArrayList<>();
-        TipType tipType = ThreadLocalRandom.current().nextInt() % 2 == 0 ? TipType.NUMBER : TipType.COLOR;
+        List<Integer> tips = new ArrayList<>();
+        int tipType = (int) (Math.random() * 1);
 
-        if (tipType == TipType.NUMBER) {
+        if (tipType == 1) {
             // find all indices matching card number
             for (int i=0; i<hand.size(); i++) {
                 Card c = hand.get(i);
                 if (c.getCardValue() == card.getCardValue()) {
-                    indices.add(i);
+                    tips.add(i);
                 }
             }
-            return new TipAction(p, card.getCardValue(), indices);
+            return new TipAction(p, card.getCardValue(), tips);
         } else {
             // find all indices matching card suit
             for (int i=0; i<hand.size(); i++) {
                 Card c = hand.get(i);
                 if (c.getCardColor() == card.getCardColor()) {
-                    indices.add(i);
+                    tips.add(i);
                 }
             }
 
-            return new TipAction(p, card.getCardColor(), indices);
+            return new TipAction(p, card.getCardColor(), tips);
         }
     }
 }
