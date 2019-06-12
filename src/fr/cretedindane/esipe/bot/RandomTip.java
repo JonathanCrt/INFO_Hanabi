@@ -21,10 +21,8 @@ public class RandomTip extends Bot {
     }
 
     @Override
-    public Action takeAction(Map<Colors, Stack<Card>> fireworks,
-                             List<PlayerHand> playerHands,
-                             int remainingTips,
-                             int remainingFuses){
+    public Action takenAction(Map<Colors, Stack<Card>> fireworks,
+                             List<PlayerHand> playerHands){
         Player p = playerHands.get(0).getPlayer();
         List<Card> hand = playerHands.get(0).getCards();
         int randomIndex = ThreadLocalRandom.current().nextInt(0, hand.size());

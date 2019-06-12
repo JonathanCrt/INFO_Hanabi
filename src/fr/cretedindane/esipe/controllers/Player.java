@@ -23,6 +23,14 @@ public class Player {
 		this.knownNumbers = new Vector<>(Arrays.asList(null, null, null, null, null));
 	}
 
+	public List<Integer> getKnownNumbers(){
+		return this.knownNumbers;
+	}
+
+	public List<Colors> getKnownColors(){
+		return this.knownColors;
+	}
+
 	public String getName() {
 		return this.name;
 	}

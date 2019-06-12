@@ -20,6 +20,7 @@ public class Game {
     private static Deck deck;
     private static boolean lastRound = false;
     private static int totalRounds = 0;
+    private static String result = "Last action: ";
 
     /**
      * create players, players hands and set fireworks
@@ -145,7 +146,7 @@ public class Game {
 
     private static List<PlayerHand> getOtherPlayerHand(ActionType actionType, Player actualPlayer) {
         int found = -1;
-        int index = 1;
+        int index;
         List<PlayerHand> otherHand = new ArrayList<PlayerHand>();
 
         while(found == -1) {
@@ -171,7 +172,7 @@ public class Game {
                 found = 0;
             } else  {
                 System.out.println("You're only " + players.size() + " players with a hand of "+ handCards + " cards. Please select a valid index.");
-                displayGameStatus();
+                displayGameStatus(actualPlayer);
                 found = -1;
             }
         }
@@ -270,7 +271,7 @@ public class Game {
 
     /** Define type of action took by a player */
     private static void takenAction(Player actualPlayer){
-        displayGameStatus();
+        displayGameStatus(actualPlayer);
         System.out.println(actualPlayer.getName() + " turn:");
 
         /** Type action */
@@ -278,10 +279,14 @@ public class Game {
 
         switch(action.getActionType()){
             case TIP:
+                result = "Last action: ";
                 /** take off a blue token */
                 bluetokens.poll();
+                if(bluetokens.size() == 1) {
+                    result += "\nBe careful! Only one blue token remaining!";
+                }
                 if(bluetokens.isEmpty()) {
-                    System.out.println("Be careful! No blue token remaining!");
+                    result += "\nBe careful! No blue token remaining!";
                 }
 
                 /** Get selected Player
@@ -296,14 +301,15 @@ public class Game {
                     receivingPlayer.receiveColorTip(tip.getTipColor(), tip.getImpactedCards());
                 }
 
-                System.out.println(actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at indexed cards " + tip.displayImpactedCard()
-                        + (tip.getType() == TipType.NUMBER ? (" as number " + tip.getTipNumber()) : (" as color " + tip.getTipColor()))  + ".");
+                result += "\n" + actualPlayer.getName() + " gave a tip to '" + receivingPlayer.getName() + "' at indexed cards " + tip.displayImpactedCard()
+                        + (tip.getType() == TipType.NUMBER ? (" as number " + tip.getTipNumber()) : (" as color " + tip.getTipColor()))  + ".";
 
                 break;
             case PLAY:
+                result = "Last action: ";
                 /** played card */
                 Card playedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
-                System.out.println(actualPlayer.getName() + " played a " + playedCard);
+                result += actualPlayer.getName() + " played a " + playedCard;
 
                 /** play card */
                 if (canPlayCard(playedCard)) {
@@ -313,14 +319,14 @@ public class Game {
 
                     /** Check if the firework has been completed */
                     if (playedCard.getCardValue() == 5 && bluetokens.size() < 8) {
-                        System.out.println("Awesome! The " + playedCard.getCardColor() + " firework has been completed!");
+                        result += "\nAwesome! The " + playedCard.getCardColor() + " firework has been completed!";
                         if(bluetokens.size() < 8) bluetokens.add(new Bluetokens());
                     }
                 } else {
                     // if the player put the wrong card on the table
                     redtokens.poll();
-                    System.out.println("Wrong card " + actualPlayer.getName() + "! (" + playedCard + " cannot be played)!");
-                    System.out.println("Red tokens left: " + redtokens.size());
+                    result += "\nWrong card " + actualPlayer.getName() + "! (" + playedCard + " cannot be played)!";
+                    result += "\nRed tokens left: " + redtokens.size();
                 }
 
                 /** Give a new card to the player */
@@ -330,25 +336,26 @@ public class Game {
                     System.out.println(actualPlayer);
                 } else {
                     if(numberOfPlayers-round-1 == 0){
-                        System.out.println("\n -- Last round played!\n");
+                        result += "\n -- Last round played!\n";
                     } else {
-                        System.out.println("No more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.");
+                        result += "\nNo more cards left. " + (numberOfPlayers - round - 1) + " rounds to go.";
                     }
                 }
-                System.out.println("\nActual fireworks: " + fireworks);
+                result += "\nActual fireworks: " + fireworks;
 
                 break;
             case DROP:
+                result = "Last action: ";
                 /** discard the card */
                 Card discardedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
-                System.out.println(actualPlayer.getName() + " discarded a " + discardedCard);
+                result += "\n" + actualPlayer.getName() + " discarded a " + discardedCard;
 
                 /** give a new card to the player */
                 if(deck.size() > 0) {
                     Card newCard = deck.getTopCard();
                     actualPlayer.cardHasBeenUsed(action.getImpactedCards().get(0));
                     playerHands.get(actualPlayer).add(newCard);
-                    System.out.println(actualPlayer.getName() + " has a new card in his hand.\n");
+                    result += "\n" + actualPlayer.getName() + " has a new card in his hand.\n";
                 }
 
                 /** new tip (blue token)*/
@@ -366,7 +373,7 @@ public class Game {
 
         if (deck.size() == 0) {
             if(!lastRound){
-                System.out.println("\nLast Round!!\n");
+                result += "\n WARNING! Last Round! \n";
                 lastRound = true;
             }
         }
@@ -376,16 +383,24 @@ public class Game {
         }
     }
 
-    private static void displayGameStatus(){
+    private static void displayGameStatus(Player player){
+        /** clean console */
+        for(int i=0; i<2000; i++) {
+            System.out.println("\n");
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n\n\n-----------------------------------------------------------------------------------------------\n");
         sb.append("-----------------------------------  GAME STATUS  ---------------------------------------------\n");
         sb.append("-----------------------------------------------------------------------------------------------\n");
         sb.append("Players and they hand: \n");
         for(Player p: players){
-            sb.append(p).append(" ->");
-            sb.append(playerHands.get(p)).append(".\n");
+            if(!(p.equals(player))) {
+                sb.append(p).append(" ->");
+                sb.append(playerHands.get(p)).append(".\n");
+            }
         }
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append(result);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
         sb.append("Round number: ");
         sb.append(totalRounds);

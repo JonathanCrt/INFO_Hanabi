@@ -16,9 +16,5 @@ public abstract class Bot extends Player {
         super(name);
     }
 
-    public abstract Action takeAction(
-            Map<Colors, Stack<Card>> fireworks,
-            List<PlayerHand> playerHands,
-            int remainingTips,
-            int remainingFuses);
+    public abstract Action takenAction(Map<Colors, Stack<Card>> fireworks, List<PlayerHand> playerHands);
 }
