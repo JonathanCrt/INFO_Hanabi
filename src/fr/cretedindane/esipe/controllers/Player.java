@@ -27,10 +27,6 @@ public class Player {
 		return this.knownNumbers;
 	}
 
-	public List<Colors> getKnownColors(){
-		return this.knownColors;
-	}
-
 	public String getName() {
 		return this.name;
 	}

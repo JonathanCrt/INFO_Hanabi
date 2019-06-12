@@ -1,12 +1,10 @@
 package fr.cretedindane.esipe.controllers;
 
 import fr.cretedindane.esipe.action.*;
-import fr.cretedindane.esipe.bot.AlwaysDrop;
-import fr.cretedindane.esipe.bot.AlwaysPlay;
-import fr.cretedindane.esipe.bot.Bot;
-import fr.cretedindane.esipe.bot.RandomTip;
+import fr.cretedindane.esipe.bot.*;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Game {
     private static int round = -1;
@@ -20,14 +18,14 @@ public class Game {
     private static Deck deck;
     private static boolean lastRound = false;
     private static int totalRounds = 0;
-    private static String result = "Last action: ";
+    private static String result = "Last Action: ";
 
     /**
      * create players, players hands and set fireworks
      * @param numberOfPlayers
      * @param handCards
      */
-
+/**
     private static void setGame(int numberOfPlayers, int handCards) {
         Scanner nameP = new Scanner(System.in);
 
@@ -41,17 +39,26 @@ public class Game {
             playerHands.put(p, new ArrayList<>());
         }
 
-        for (int j=0; j<handCards; j++) {
+        for (Colors s : Colors.values()) {
+            fireworks.put(s, new Stack<>());
+        }
+
+        for (int i=0; i<8; i++) {
+            bluetokens.add(new Bluetokens());
+        }
+
+        for (int i=0; i<3; i++) {
+            redtokens.add(new Redtokens());
+        }
+
+        for (int j=0; j<5; j++) {
             for (Player p : players) {
                 Card c = deck.getTopCard();
                 playerHands.get(p).add(c);
             }
         }
-        for (Colors s : Colors.values()) {
-            fireworks.put(s, new Stack<>());
-        }
     }
-
+*/
     /**
      * returns selected card by player
      * @param player
@@ -203,21 +210,27 @@ public class Game {
         return index;
     }
 
-    private static Action takeAction(ActionType actionType, List<PlayerHand> playerHand) {
+    private static Action takeAction(ActionType actionType, List<PlayerHand> playerHand, Integer index) {
         if (actionType == ActionType.DROP) {
-            int index = selectedIndex(0);
-            return new DropCardAction(index);
+            return new DropCardAction(0);
         } else if (actionType == ActionType.PLAY) {
-            int index = selectedIndex(0);
             return new PlayCardAction(index);
         } else {
             Player p = playerHand.get(0).getPlayer();
             List<Card> hand = playerHand.get(0).getCards();
 
-            int tipType = selectedIndex(null);
-            int index = selectedIndex(0);
-            Card card = hand.get(index);
+            /** Replace next 4 lines by next lines to active non-bot play */
+            /**
+             int tipType = selectedIndex(null);
+             int index = selectedIndex(0);
+             Card card = hand.get(index);
+             List<Integer> tips = new ArrayList<>();
+             */
+
+            int cardIndex = ThreadLocalRandom.current().nextInt(0, hand.size());
+            Card card = hand.get(cardIndex);
             List<Integer> tips = new ArrayList<>();
+            int tipType = (int)(Math.random() * 1);
 
             if(tipType == 1){
                 for(int i=0; i<hand.size(); i++){
@@ -257,7 +270,7 @@ public class Game {
         }
 
         while(actionTry > 0){
-            action = takeAction(actionType, getOtherPlayerHand(actionType, player));
+            action = takeAction(actionType, getOtherPlayerHand(actionType, player), null);
             if(actionType == ActionType.TIP && bluetokens.isEmpty()) {
                 actionTry--;
             } else {
@@ -270,23 +283,18 @@ public class Game {
     }
 
     /** Define type of action took by a player */
-    private static void takenAction(Player actualPlayer){
-        displayGameStatus(actualPlayer);
-        System.out.println(actualPlayer.getName() + " turn:");
-
-        /** Type action */
-        Action action = getAction(actualPlayer);
-
+    private static void takenActionAux(Player actualPlayer, Action action) {
+        if(bluetokens.isEmpty()) {
+            result += "\nBe careful! No blue token remaining!";
+            return;
+        }
         switch(action.getActionType()){
             case TIP:
-                result = "Last action: ";
+                result = "\nLast action: ";
                 /** take off a blue token */
                 bluetokens.poll();
                 if(bluetokens.size() == 1) {
                     result += "\nBe careful! Only one blue token remaining!";
-                }
-                if(bluetokens.isEmpty()) {
-                    result += "\nBe careful! No blue token remaining!";
                 }
 
                 /** Get selected Player
@@ -306,7 +314,7 @@ public class Game {
 
                 break;
             case PLAY:
-                result = "Last action: ";
+                result = "\nLast action: ";
                 /** played card */
                 Card playedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
                 result += actualPlayer.getName() + " played a " + playedCard;
@@ -315,7 +323,6 @@ public class Game {
                 if (canPlayCard(playedCard)) {
                     // put the card on the table
                     fireworks.get(playedCard.getCardColor()).add(playedCard);
-                    System.out.println(playedCard);
 
                     /** Check if the firework has been completed */
                     if (playedCard.getCardValue() == 5 && bluetokens.size() < 8) {
@@ -333,7 +340,6 @@ public class Game {
                 if(deck.size() != 0) {
                     Card newCard = deck.getTopCard();
                     playerHands.get(actualPlayer).add(newCard);
-                    System.out.println(actualPlayer);
                 } else {
                     if(numberOfPlayers-round-1 == 0){
                         result += "\n -- Last round played!\n";
@@ -345,7 +351,7 @@ public class Game {
 
                 break;
             case DROP:
-                result = "Last action: ";
+                result = "\nLast action: ";
                 /** discard the card */
                 Card discardedCard = removeCardFromHand(actualPlayer, action.getImpactedCards().get(0));
                 result += "\n" + actualPlayer.getName() + " discarded a " + discardedCard;
@@ -366,6 +372,13 @@ public class Game {
                 break;
         }
 
+    }
+    private static void takenAction(Player actualPlayer){
+        displayGameStatus(actualPlayer);
+
+        /** Type action */
+        Action action = getAction(actualPlayer);
+        takenActionAux(actualPlayer, action);
         //check round
         if(lastRound && round > -1 && round < numberOfPlayers){
             round++;
@@ -380,6 +393,89 @@ public class Game {
 
         if(lastRound && round == -1){
             round = 0;
+        }
+    }
+
+    public static void botTakenAction(Player actualPlayer, int tipsLeft){
+        result = "\nLast Action: ";
+
+        List<PlayerHand> actualPlayerHand = new ArrayList<>();
+        List<Integer> tips = new ArrayList<>();
+        List<Card> nextCards = playerHands.get(actualPlayer);
+
+        int wantedNumber = 1;
+
+        /** We check the top card colors, and check is our hand can play the next number of fireworks stack */
+        for (Map.Entry<Colors, Stack<Card>> e : fireworks.entrySet()) {
+            if ((!e.getValue().isEmpty()) && (e.getValue().peek().getCardValue() == 1)) {
+                Colors color = e.getValue().peek().getCardColor();
+                for (Card c : nextCards) {
+                    if (c.getCardColor() == color){
+                        if(c.getCardValue() == 2) {
+                            wantedNumber = 2;
+                        } else if (c.getCardValue() == 3) {
+                            wantedNumber = 3;
+                        }else if (c.getCardValue() == 4) {
+                            wantedNumber = 4;
+                        } else {
+                            wantedNumber = 5;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(wantedNumber < 2){
+            int maxKnown = 0;
+            for(Integer i: actualPlayer.getKnownNumbers()){
+                if(i != null && i> maxKnown){
+                    maxKnown = i;
+                }
+            }
+
+            /** Play if highest known number can be played */
+            if(maxKnown > 0){
+                for(int i=0; i<actualPlayer.getKnownNumbers().size(); i++){
+                    if (actualPlayer.getKnownNumbers().get(i) != null && actualPlayer.getKnownNumbers().get(i) == maxKnown){
+                        result += "\nPlay action for player " + actualPlayer + ".";
+                        actualPlayerHand.clear();
+                        actualPlayerHand.add(new PlayerHand(actualPlayer, playerHands.get(actualPlayer)));
+                        takenActionAux(actualPlayer, takeAction(ActionType.PLAY, actualPlayerHand, wantedNumber));
+                    }
+                }
+            }
+
+            /** Drop card if no more tips remaining*/
+            if(tipsLeft == 0){
+                result += "\nDiscard action for player " + actualPlayer + ".";
+                actualPlayerHand.clear();
+                actualPlayerHand.add(new PlayerHand(actualPlayer, playerHands.get(actualPlayer)));
+                takenActionAux(actualPlayer, takeAction(ActionType.DROP, actualPlayerHand, null));
+            }
+        }
+
+        /** Tip card[numberOfActions] */
+        if(tips.isEmpty()){
+            for(int i=0; i<nextCards.size(); i++){
+                if(nextCards.get(i).getCardValue() == wantedNumber){
+                    tips.add(i);
+                }
+            }
+        }
+
+        /** If the list ins't empty, we give a tip from it, else we discard a card */
+        if(!(tips.isEmpty()) && tipsLeft != 0){
+            /** Select random index player */
+            int randInt = (int) (Math.random() * players.size() + 1);
+            System.out.println(randInt);
+            Player  p = players.get(0);
+
+            takenActionAux(actualPlayer, new TipAction(p, wantedNumber, tips));
+        } else {
+            result += "\nDiscard action for player " + actualPlayer + ".";
+            actualPlayerHand.clear();
+            actualPlayerHand.add(new PlayerHand(actualPlayer, playerHands.get(actualPlayer)));
+            takenActionAux(actualPlayer, takeAction(ActionType.DROP, actualPlayerHand, null));
         }
     }
 
@@ -400,23 +496,20 @@ public class Game {
             }
         }
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
+        sb.append("Actual Player: ").append(player.getName());
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         sb.append(result);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Round number: ");
-        sb.append(totalRounds);
+        sb.append("Round number: ").append(totalRounds);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Deck size: ");
-        sb.append(deck.size());
+        sb.append("Deck size: ").append(deck.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Fireworks status: ");
-        sb.append(fireworks);
+        sb.append("Fireworks status: ").append(fireworks);
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Blue tokens left (Tips): ");
-        sb.append(bluetokens.size());
+        sb.append("Blue tokens left (Tips): ").append(bluetokens.size());
         sb.append("\n-----------------------------------------------------------------------------------------------\n");
-        sb.append("Red tokens left (Hearts): ");
-        sb.append(redtokens.size());
-        sb.append("\n-----------------------------------------------------------------------------------------------\n\n");
+        sb.append("Red tokens left (Hearts): ").append(redtokens.size());
+        sb.append("\n-----------------------------------------------------------------------------------------------\n");
         
         String status = sb.toString();
         System.out.println(status);
@@ -432,15 +525,7 @@ public class Game {
         bluetokens = new LinkedList<>();
         playerHands = new HashMap<>();
 
-        for (int i=0; i<8; i++) {
-            bluetokens.add(new Bluetokens());
-        }
-
-        for (int i=0; i<3; i++) {
-            redtokens.add(new Redtokens());
-        }
-
-        /** Set game from number of players*/
+        /** Set game from number of players
         System.out.println("How many players are you? ");
         Scanner s = new Scanner(System.in);
 
@@ -463,54 +548,66 @@ public class Game {
             }
         }
 
-        /** Set players and they hand */
+        /** Set players and they hand
         setGame(numberOfPlayers, handCards);
+        */
+
+        Player p1 = new AdvancedBot("Bob");
+        Player p2 = new AdvancedBot("Annie");
+        Player p3 = new AdvancedBot("Zac");
+
+        players.add(p1);
+        playerHands.put(p1, new ArrayList<>());
+        players.add(p2);
+        playerHands.put(p2, new ArrayList<>());
+        players.add(p3);
+        playerHands.put(p3, new ArrayList<>());
+
+        for (Colors s : Colors.values()) {
+            fireworks.put(s, new Stack<>());
+        }
+
+        for (int i=0; i<8; i++) {
+            bluetokens.add(new Bluetokens());
+        }
+
+        for (int i=0; i<3; i++) {
+            redtokens.add(new Redtokens());
+        }
+
+        for (int j=0; j<5; j++) {
+            for (Player p : players) {
+                Card c = deck.getTopCard();
+                playerHands.get(p).add(c);
+            }
+        }
 
         /** Let's make the players play! */
         while(!(endGame())) {
             for (Player p : players) {
                 if (!(endGame())) {
+                    displayGameStatus(p);
+                    try {
+                        Thread.sleep(2000);
+                    } catch(InterruptedException e){
+                        Thread.currentThread().interrupt();
+                    }
                     totalRounds++;
-                    takenAction(p);
+                    botTakenAction(p, bluetokens.size());
                 }
             }
         }
 
-
-        /** Test Bots
-        List<Bot> bots = new LinkedList<>();
-        Map<Bot, List<Card>> botHands = new HashMap<>();
-
-        Bot bot1 = new AlwaysDrop("Discarded");
-        Bot bot2 = new AlwaysPlay("Player");
-        Bot bot3 = new RandomTip("Tipper");
-
-        bots.add(bot1);
-        bots.add(bot2);
-        bots.add(bot3);
-
-        for (Colors c : Colors.values()){
-            fireworks.put(c, new Stack<>());
-        }
-
-        for(Bot b: bots) {
-            botHands.put(b, new ArrayList<>());
-        }
-
-         handCards = 5;
-        for (int j=0; j<handCards; j++) {
-            for (Bot b : bots) {
-                Card c = deck.getTopCard();
-                botHands.get(b).add(c);
+        /** comment last while and uncomment next line to active non-bot play */
+        /**
+        while(!(endGame())) {
+            for (Player p : players) {
+                if (!(endGame())) {
+                    takenAction(p);
+                }
             }
         }
-
-        for (Bot b : bots) {
-            while (!endGame()) {
-                takenAction(b);
-            }
-        }
-         */
+        */
     }
 
 }
